@@ -1,7 +1,10 @@
 import React from 'react';
 
-const Cart = ({ cartItems, onUpdateQuantity, onRemoveItem, onCheckout }) => {
-  const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+const Cart = ({ cartItems, onUpdateQuantity, onRemoveItem, onCheckout, onApplyItemDiscount, onApplyTransactionDiscount, transactionDiscount }) => {
+  const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+  const itemsDiscountTotal = cartItems.reduce((sum, item) => sum + (item.discount_amount || 0), 0);
+  const transactionDiscountAmount = transactionDiscount?.amount || 0;
+  const total = subtotal - itemsDiscountTotal - transactionDiscountAmount;
 
   return (
     <div className="bg-white rounded-lg shadow h-full flex flex-col p-3 relative">
@@ -34,7 +37,7 @@ const Cart = ({ cartItems, onUpdateQuantity, onRemoveItem, onCheckout }) => {
                   ×
                 </button>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center space-x-1 bg-white rounded border border-gray-300">
                   <button
                     onClick={() => onUpdateQuantity(item.product_id, item.quantity - 1)}
@@ -61,6 +64,25 @@ const Cart = ({ cartItems, onUpdateQuantity, onRemoveItem, onCheckout }) => {
                   </p>
                 </div>
               </div>
+              
+              {/* Item Discount */}
+              {item.discount_amount > 0 && (
+                <div className="bg-green-50 border border-green-200 rounded p-1 mt-1">
+                  <p className="text-xs text-green-700">
+                    Diskon {item.discount_type === 'percentage' ? `${item.discount_value}%` : `Rp ${item.discount_value.toLocaleString('id-ID')}`}: 
+                    <span className="font-bold ml-1">- Rp {item.discount_amount.toLocaleString('id-ID')}</span>
+                  </p>
+                </div>
+              )}
+              
+              {/* Discount Button */}
+              <button
+                onClick={() => onApplyItemDiscount(item)}
+                data-testid={`cart-discount-${item.product_id}`}
+                className="w-full mt-1 bg-purple-100 hover:bg-purple-200 text-purple-800 font-semibold py-1 text-xs rounded transition-all"
+              >
+                🏷️ {item.discount_amount > 0 ? 'Ubah Diskon' : 'Diskon'}
+              </button>
             </div>
           ))
         )}
@@ -68,7 +90,43 @@ const Cart = ({ cartItems, onUpdateQuantity, onRemoveItem, onCheckout }) => {
 
       {/* Sticky Total & Button BAYAR */}
       <div className="absolute bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 pt-4 pb-3 px-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-        <div className="flex justify-between items-center mb-4">
+        {/* Subtotal */}
+        <div className="flex justify-between items-center text-sm mb-1">
+          <span className="text-gray-600">Subtotal:</span>
+          <span className="font-semibold">Rp {subtotal.toLocaleString('id-ID')}</span>
+        </div>
+        
+        {/* Items Discount */}
+        {itemsDiscountTotal > 0 && (
+          <div className="flex justify-between items-center text-sm mb-1">
+            <span className="text-green-600">Diskon Item:</span>
+            <span className="font-semibold text-green-600">- Rp {itemsDiscountTotal.toLocaleString('id-ID')}</span>
+          </div>
+        )}
+        
+        {/* Transaction Discount */}
+        {transactionDiscountAmount > 0 && (
+          <div className="flex justify-between items-center text-sm mb-1">
+            <span className="text-green-600">
+              Diskon Transaksi {transactionDiscount.type === 'percentage' ? `(${transactionDiscount.value}%)` : ''}:
+            </span>
+            <span className="font-semibold text-green-600">- Rp {transactionDiscountAmount.toLocaleString('id-ID')}</span>
+          </div>
+        )}
+        
+        {/* Transaction Discount Button */}
+        {cartItems.length > 0 && (
+          <button
+            onClick={onApplyTransactionDiscount}
+            data-testid="transaction-discount-button"
+            className="w-full mb-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-semibold py-2 text-sm rounded transition-all"
+          >
+            🏷️ {transactionDiscountAmount > 0 ? 'Ubah' : 'Tambah'} Diskon Transaksi
+          </button>
+        )}
+        
+        {/* Total */}
+        <div className="flex justify-between items-center mb-4 border-t-2 border-gray-300 pt-2">
           <span className="text-lg font-bold text-gray-700">TOTAL:</span>
           <span className="text-3xl font-bold text-orange-600" data-testid="cart-total">
             Rp {total.toLocaleString('id-ID')}
