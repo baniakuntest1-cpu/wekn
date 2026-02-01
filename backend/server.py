@@ -41,11 +41,13 @@ product_router = setup_product_routes(db)
 transaction_router = setup_transaction_routes(db)
 report_router = setup_report_routes(db)
 customer_router = setup_customer_routes(db)
+shift_router = setup_shift_routes(db)
 
 api_router.include_router(product_router)
 api_router.include_router(transaction_router)
 api_router.include_router(report_router)
 api_router.include_router(customer_router)
+api_router.include_router(shift_router)
 
 # Include the router in the main app
 app.include_router(api_router)
