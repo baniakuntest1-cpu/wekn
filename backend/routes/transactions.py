@@ -21,9 +21,23 @@ def setup_transaction_routes(db: AsyncIOMotorDatabase):
                     {"$set": {"stock": new_stock}}
                 )
         
+        # Update customer stats if customer_id provided
+        if transaction.customer_id:
+            await db.customers.update_one(
+                {"id": transaction.customer_id},
+                {
+                    "$inc": {
+                        "total_transactions": 1,
+                        "total_spent": transaction.total
+                    }
+                }
+            )
+        
         # Save transaction
         doc = transaction.model_dump()
         doc['timestamp'] = doc['timestamp'].isoformat()
+        # Convert payment_methods to list of dicts
+        doc['payment_methods'] = [pm.dict() if hasattr(pm, 'dict') else pm for pm in doc['payment_methods']]
         await db.transactions.insert_one(doc)
         
         return transaction
