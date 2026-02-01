@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from models.shift import Shift, ShiftCreate, ShiftClose
 
 router = APIRouter(prefix="/shifts", tags=["shifts"])
