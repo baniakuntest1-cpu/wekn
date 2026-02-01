@@ -4,6 +4,7 @@ import ProductGrid from '../components/ProductGrid';
 import Cart from '../components/Cart';
 import PaymentModal from '../components/PaymentModal';
 import Receipt from '../components/Receipt';
+import DiscountModal from '../components/DiscountModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -16,6 +17,11 @@ const CashierPage = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [completedTransaction, setCompletedTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  // Discount states
+  const [showDiscountModal, setShowDiscountModal] = useState(false);
+  const [discountTarget, setDiscountTarget] = useState(null); // item or 'transaction'
+  const [transactionDiscount, setTransactionDiscount] = useState(null);
 
   useEffect(() => {
     fetchProducts();
