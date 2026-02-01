@@ -55,12 +55,14 @@ def require_role(allowed_roles: list):
     return role_checker
 
 # Optional auth - untuk backward compatibility
-def get_current_user_optional(credentials: Optional[HTTPAuthorizationCredentials] = Security(security, auto_error=False)):
+def get_current_user_optional(credentials: Optional[HTTPAuthorizationCredentials] = Depends(lambda: None)):
     if credentials is None:
         return None
     try:
-        token = credentials.credentials
-        payload = decode_token(token)
-        return payload
+        if hasattr(credentials, 'credentials'):
+            token = credentials.credentials
+            payload = decode_token(token)
+            return payload
+        return None
     except:
         return None
