@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 const Receipt = ({ transaction, onClose, autoPrint = true }) => {
   useEffect(() => {
     if (autoPrint && transaction) {
-      // Auto print after 500ms
       const timer = setTimeout(() => {
         window.print();
       }, 500);
@@ -22,6 +21,46 @@ const Receipt = ({ transaction, onClose, autoPrint = true }) => {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const printStyles = {
+    container: {
+      width: '58mm',
+      fontSize: '12px',
+      fontFamily: 'monospace',
+      padding: '5mm'
+    },
+    center: {
+      textAlign: 'center',
+      marginBottom: '10px'
+    },
+    title: {
+      fontSize: '16px',
+      fontWeight: 'bold'
+    },
+    small: {
+      fontSize: '10px'
+    },
+    divider: {
+      borderTop: '1px dashed #000',
+      paddingTop: '8px',
+      marginBottom: '8px',
+      fontSize: '10px'
+    },
+    itemRow: {
+      marginBottom: '4px'
+    },
+    flexBetween: {
+      display: 'flex',
+      justifyContent: 'space-between'
+    },
+    totalRow: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      fontWeight: 'bold',
+      fontSize: '14px',
+      marginBottom: '4px'
+    }
   };
 
   return (
@@ -92,15 +131,15 @@ const Receipt = ({ transaction, onClose, autoPrint = true }) => {
       </div>
 
       {/* Print View - 58mm thermal printer */}
-      <div className="print-receipt" style={{ display: 'none' }}>
-        <div style={{ width: '58mm', fontSize: '12px', fontFamily: 'monospace', padding: '5mm' }}>
-          <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-            <div style={{ fontSize: '16px', fontWeight: 'bold' }}>WEEKN</div>
-            <div style={{ fontSize: '10px' }}>Everyday is Weekend</div>
-            <div style={{ fontSize: '10px' }}>Toko Roti</div>
+      <div className="print-receipt">
+        <div style={printStyles.container}>
+          <div style={printStyles.center}>
+            <div style={printStyles.title}>WEEKN</div>
+            <div style={printStyles.small}>Everyday is Weekend</div>
+            <div style={printStyles.small}>Toko Roti</div>
           </div>
           
-          <div style={{ borderTop: '1px dashed #000', paddingTop: '8px', marginBottom: '8px', fontSize: '10px' }}>
+          <div style={printStyles.divider}>
             <div>No: {transaction.id.substring(0, 8)}</div>
             <div>{formatDate(transaction.timestamp)}</div>
             <div>Kasir: {transaction.cashier_name}</div>
@@ -108,11 +147,11 @@ const Receipt = ({ transaction, onClose, autoPrint = true }) => {
 
           <div style={{ marginBottom: '8px' }}>
             {transaction.items.map((item, idx) => (
-              <div key={idx} style={{ marginBottom: '4px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div key={idx} style={printStyles.itemRow}>
+                <div style={printStyles.flexBetween}>
                   <span>{item.product_name}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px' }}>
+                <div style={{ ...printStyles.flexBetween, fontSize: '10px' }}>
                   <span>{item.quantity} x Rp {item.price.toLocaleString('id-ID')}</span>
                   <span>Rp {item.subtotal.toLocaleString('id-ID')}</span>
                 </div>
@@ -120,22 +159,22 @@ const Receipt = ({ transaction, onClose, autoPrint = true }) => {
             ))}
           </div>
 
-          <div style={{ borderTop: '1px dashed #000', paddingTop: '8px', marginBottom: '8px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '14px', marginBottom: '4px' }}>
+          <div style={printStyles.divider}>
+            <div style={printStyles.totalRow}>
               <span>TOTAL</span>
               <span>Rp {transaction.total.toLocaleString('id-ID')}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px' }}>
+            <div style={{ ...printStyles.flexBetween, fontSize: '10px' }}>
               <span>Tunai</span>
               <span>Rp {transaction.cash_received.toLocaleString('id-ID')}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 'bold' }}>
+            <div style={{ ...printStyles.flexBetween, fontSize: '10px', fontWeight: 'bold' }}>
               <span>Kembali</span>
               <span>Rp {transaction.change.toLocaleString('id-ID')}</span>
             </div>
           </div>
 
-          <div style={{ textAlign: 'center', fontSize: '10px', marginTop: '10px' }}>
+          <div style={{ ...printStyles.center, fontSize: '10px', marginTop: '10px' }}>
             <div>Terima kasih atas</div>
             <div>kunjungan Anda!</div>
             <div style={{ marginTop: '5px' }}>Selamat menikmati!</div>
