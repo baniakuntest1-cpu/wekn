@@ -243,22 +243,38 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
           <label className="block text-sm font-semibold text-gray-700 mb-2">
             Pilih Metode Pembayaran:
           </label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => handleSelectPaymentType('cash')}
-              className={`${paymentType === 'cash' ? 'bg-green-500 text-white ring-2 ring-green-600' : 'bg-green-100 text-green-800 hover:bg-green-200'} font-bold py-4 text-lg rounded-lg transition-all flex items-center justify-center gap-2`}
+              className={`${paymentType === 'cash' ? 'bg-green-500 text-white ring-2 ring-green-600' : 'bg-green-100 text-green-800 hover:bg-green-200'} font-bold py-3 text-base rounded-lg transition-all flex items-center justify-center gap-2`}
               data-testid="payment-type-cash"
             >
               <span>💵</span>
               <span>TUNAI</span>
             </button>
             <button
-              onClick={() => handleSelectPaymentType('noncash')}
-              className={`${paymentType === 'noncash' ? 'bg-blue-500 text-white ring-2 ring-blue-600' : 'bg-blue-100 text-blue-800 hover:bg-blue-200'} font-bold py-4 text-lg rounded-lg transition-all flex items-center justify-center gap-2`}
-              data-testid="payment-type-noncash"
+              onClick={() => handleSelectPaymentType('edc')}
+              className={`${paymentType === 'edc' ? 'bg-blue-500 text-white ring-2 ring-blue-600' : 'bg-blue-100 text-blue-800 hover:bg-blue-200'} font-bold py-3 text-base rounded-lg transition-all flex items-center justify-center gap-2`}
+              data-testid="payment-type-edc"
+            >
+              <span>💳</span>
+              <span>EDC</span>
+            </button>
+            <button
+              onClick={() => handleSelectPaymentType('qris')}
+              className={`${paymentType === 'qris' ? 'bg-purple-500 text-white ring-2 ring-purple-600' : 'bg-purple-100 text-purple-800 hover:bg-purple-200'} font-bold py-3 text-base rounded-lg transition-all flex items-center justify-center gap-2`}
+              data-testid="payment-type-qris"
             >
               <span>📱</span>
-              <span>NON-TUNAI</span>
+              <span>QRIS</span>
+            </button>
+            <button
+              onClick={() => handleSelectPaymentType('tf')}
+              className={`${paymentType === 'tf' ? 'bg-teal-500 text-white ring-2 ring-teal-600' : 'bg-teal-100 text-teal-800 hover:bg-teal-200'} font-bold py-3 text-base rounded-lg transition-all flex items-center justify-center gap-2`}
+              data-testid="payment-type-tf"
+            >
+              <span>🏦</span>
+              <span>TF</span>
             </button>
           </div>
         </div>
