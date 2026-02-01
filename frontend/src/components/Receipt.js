@@ -60,9 +60,16 @@ const Receipt = ({ transaction, onClose, autoPrint = true }) => {
                 <div className="mt-2 pt-2 border-t border-gray-200">
                   <p className="text-xs text-gray-600 mb-1">Pembayaran:</p>
                   {transaction.payment_methods.map((pm, idx) => (
-                    <div key={idx} className="flex justify-between text-xs">
-                      <span className="capitalize">{pm.method}</span>
-                      <span>Rp {pm.amount.toLocaleString('id-ID')}</span>
+                    <div key={idx} className="mb-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="capitalize">{pm.method}</span>
+                        <span>Rp {pm.amount.toLocaleString('id-ID')}</span>
+                      </div>
+                      {pm.reference && (
+                        <div className="text-xs text-gray-500 ml-2">
+                          Ref: {pm.reference}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
