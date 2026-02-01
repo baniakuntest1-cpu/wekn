@@ -30,6 +30,7 @@ from routes.transactions import setup_transaction_routes
 from routes.reports import setup_report_routes
 from routes.customers import setup_customer_routes
 from routes.shifts import setup_shift_routes
+from routes.auth import setup_auth_routes
 
 # Health check endpoint
 @api_router.get("/")
@@ -42,7 +43,9 @@ transaction_router = setup_transaction_routes(db)
 report_router = setup_report_routes(db)
 customer_router = setup_customer_routes(db)
 shift_router = setup_shift_routes(db)
+auth_router = setup_auth_routes(db)
 
+api_router.include_router(auth_router)
 api_router.include_router(product_router)
 api_router.include_router(transaction_router)
 api_router.include_router(report_router)
