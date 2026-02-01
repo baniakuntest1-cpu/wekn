@@ -190,6 +190,41 @@ const CashierPage = () => {
 
   return (
     <div className="h-screen bg-gradient-to-br from-orange-50 to-teal-50 p-3 overflow-hidden" data-testid="cashier-page">
+      {/* Shift Status Banner */}
+      {!activeShift && (
+        <div className="max-w-7xl mx-auto mb-2">
+          <div className="bg-yellow-100 border-2 border-yellow-400 text-yellow-900 px-4 py-2 rounded-lg flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">⚠️</span>
+              <div>
+                <p className="font-bold text-sm">Tidak ada shift aktif!</p>
+                <p className="text-xs">Buka shift terlebih dahulu di menu <strong>Shift Kasir</strong> untuk memulai transaksi.</p>
+              </div>
+            </div>
+            <a
+              href="/shifts"
+              className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-sm"
+            >
+              Buka Shift
+            </a>
+          </div>
+        </div>
+      )}
+      
+      {activeShift && (
+        <div className="max-w-7xl mx-auto mb-2">
+          <div className="bg-green-100 border-2 border-green-400 text-green-900 px-4 py-2 rounded-lg flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">✅</span>
+              <div>
+                <p className="font-bold text-sm">Shift Aktif: {activeShift.cashier_name}</p>
+                <p className="text-xs">Modal Awal: Rp {activeShift.opening_cash.toLocaleString('id-ID')}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 max-w-7xl mx-auto h-full">
         {/* Left: Product Selection */}
         <div className="lg:col-span-2 flex flex-col overflow-hidden">
