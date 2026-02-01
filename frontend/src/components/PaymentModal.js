@@ -120,6 +120,37 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
     setPaymentType(null);
   };
 
+  const handleRegisterCustomer = async () => {
+    if (!newCustomerName.trim() || !newCustomerPhone.trim()) {
+      alert('Nama dan nomor telepon harus diisi!');
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${API}/customers`, {
+        name: newCustomerName.trim(),
+        phone: newCustomerPhone.trim()
+      });
+      
+      setSelectedCustomer(response.data);
+      setShowCustomerModal(false);
+      setNewCustomerName('');
+      setNewCustomerPhone('');
+      setCustomerSearchTerm('');
+      
+      // Refresh customer list
+      fetchCustomers();
+    } catch (error) {
+      console.error('Error registering customer:', error);
+      alert('Gagal mendaftarkan customer');
+    }
+  };
+
+  const filteredCustomers = customers.filter(customer =>
+    customer.name.toLowerCase().includes(customerSearchTerm.toLowerCase()) ||
+    customer.phone.includes(customerSearchTerm)
+  );
+
   if (!isOpen) return null;
 
   return (
