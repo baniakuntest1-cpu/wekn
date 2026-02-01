@@ -120,6 +120,18 @@ backend:
           agent: "testing"
           comment: "COMPREHENSIVE BACKEND TESTING COMPLETED ✅ All 10 core tests + 5 edge cases passed (100% success rate). Tested: 1) Open shift with validation, 2) Duplicate shift prevention, 3) Active shift retrieval, 4) Transaction creation with cash/split/non-cash payments, 5) Shift closing with correct cash reconciliation (opening_cash + cash_payments = 580k expected), 6) Duplicate close prevention, 7) Shift history sorting, 8) No active shift after close, 9) Error handling for invalid IDs, 10) Negative cash handling. Cash calculation verified: 500k opening + 50k cash + 30k cash from split = 580k (NOT including 100k GoPay). All API endpoints working correctly with proper error messages and status codes."
 
+  - task: "Role Management Backend (Auth API)"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/auth.py, /app/backend/models/user.py, /app/backend/utils/auth.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Implemented JWT-based authentication with role management (super_admin, kasir). Created auth routes: register (admin only), login, get current user, list users. Password hashing with bcrypt. Login API tested successfully via curl."
+
 frontend:
   - task: "Shift Page UI"
     implemented: true
@@ -147,6 +159,57 @@ frontend:
         - working: true
           agent: "main"
           comment: "ShiftModal handles both open and close shift flows. Fixed expected cash calculation - now done on backend only."
+  - task: "Diskon & Promo Feature"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/DiscountModal.js, /app/frontend/src/components/Cart.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Feature was already implemented by previous agent but not tested. Verified working via screenshot."
+        - working: true
+          agent: "testing"
+          comment: "✅ COMPREHENSIVE TESTING COMPLETED - All discount functionality working perfectly! Item discounts (percentage & nominal), transaction discounts, discount calculations, edge case validations, and complete checkout flow with discounts all verified. 100% success rate."
+  
+  - task: "Login Page"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/LoginPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Created login page with email/password form. Integrates with backend auth API. Redirects to dashboard (super_admin) or kasir page (kasir) after successful login. Tested via screenshot - login successful and redirects correctly."
+  
+  - task: "Protected Routes & Role-based Access"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Implemented ProtectedRoute component with role-based access control. Super Admin can access all pages. Kasir only has access to /kasir page. Unauthenticated users redirected to /login."
+  
+  - task: "User Management UI"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/UsersPage.js, /app/frontend/src/components/Sidebar.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Created Users page for managing users (add user modal, user list table). Updated Sidebar to show current user info with role badge and logout button. Added 'Manajemen User' menu item in SYSTEM section."
+
         - working: true
           agent: "testing"
           comment: "✅ SHIFT MODAL TESTING COMPLETED - Both open and close modes working perfectly! Tested: 1) Open mode: accepts cashier name and opening cash, validates inputs, submits correctly, 2) Close mode: displays shift summary (cashier, opening cash, total sales, transactions), accepts actual cash input, calculates discrepancy on backend. Modal opens/closes properly, form validation works, data submission successful. All modal functionality verified."
