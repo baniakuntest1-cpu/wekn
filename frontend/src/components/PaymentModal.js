@@ -421,6 +421,80 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
         </div>
       </div>
 
+      {/* Confirmation Dialog */}
+      {showConfirmation && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[60] p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+            <div className="text-center mb-4">
+              <div className="text-5xl mb-3">⚠️</div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Konfirmasi Pembayaran</h3>
+            </div>
+
+            {/* Items List */}
+            <div className="bg-gray-50 rounded-lg p-4 mb-4 max-h-40 overflow-y-auto">
+              <p className="font-semibold text-sm text-gray-700 mb-2">Produk yang dibeli:</p>
+              {/* Get cart items from parent - we'll need to pass this as prop */}
+              <div className="space-y-1 text-sm text-gray-600">
+                <p className="text-xs italic">Lihat detail di keranjang</p>
+              </div>
+            </div>
+
+            {/* Summary */}
+            <div className="bg-blue-50 rounded-lg p-4 mb-4">
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-gray-700">Subtotal:</span>
+                <span className="font-semibold">Rp {total.toLocaleString('id-ID')}</span>
+              </div>
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-gray-700">Diskon:</span>
+                <span className="font-semibold">Rp 0</span>
+              </div>
+              <div className="border-t border-blue-200 my-2"></div>
+              <div className="flex justify-between text-base mb-3">
+                <span className="font-bold text-gray-800">TOTAL:</span>
+                <span className="font-bold text-orange-600 text-xl">Rp {total.toLocaleString('id-ID')}</span>
+              </div>
+              
+              <div className="bg-white rounded p-2">
+                <p className="text-sm font-semibold text-gray-700 mb-1">Metode Pembayaran:</p>
+                {payments.map((payment, idx) => (
+                  <div key={idx} className="flex justify-between text-sm">
+                    <span>{payment.method_name}</span>
+                    <span className="font-semibold">Rp {payment.amount.toLocaleString('id-ID')}</span>
+                  </div>
+                ))}
+                {change > 0 && (
+                  <div className="flex justify-between text-sm text-green-600 font-semibold mt-1 pt-1 border-t">
+                    <span>Kembalian:</span>
+                    <span>Rp {change.toLocaleString('id-ID')}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <p className="text-center text-gray-700 font-semibold mb-4">
+              Apakah Anda yakin?
+            </p>
+
+            {/* Actions */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowConfirmation(false)}
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg transition-all"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleFinalConfirm}
+                className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 rounded-lg transition-all"
+              >
+                Ya, Proses
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Customer Selection Modal */}
       {showCustomerModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[60] p-4">
