@@ -408,25 +408,27 @@ class CustomerIntegrationTester:
         """Final verification of all customer stats"""
         print("\n=== Test 7: Final Stats Verification ===")
         
+        if len(self.customer_ids) != 3:
+            self.log_test("Final Stats Verification", False, f"Expected 3 customer IDs, have {len(self.customer_ids)}")
+            return
+        
         try:
-            # Get all customers and verify final stats
-            response = requests.get(f"{self.base_url}/customers")
+            # Get our specific test customers by ID
+            test_customers = []
+            test_names = ["John Doe", "Jane Smith", "Bob Wilson"]
             
-            if response.status_code == 200:
-                all_customers = response.json()
-                
-                # Find our test customers
-                test_customers = []
-                test_names = ["John Doe", "Jane Smith", "Bob Wilson"]
-                
-                for name in test_names:
-                    customer = next((c for c in all_customers if c['name'] == name), None)
-                    if customer:
-                        test_customers.append(customer)
-                
-                if len(test_customers) != 3:
-                    self.log_test("Final Stats Verification", False, f"Expected 3 test customers, found {len(test_customers)}")
+            for i, customer_id in enumerate(self.customer_ids):
+                response = requests.get(f"{self.base_url}/customers/{customer_id}")
+                if response.status_code == 200:
+                    customer = response.json()
+                    test_customers.append(customer)
+                else:
+                    self.log_test("Final Stats Verification", False, f"Failed to get customer {customer_id}: HTTP {response.status_code}")
                     return
+            
+            if len(test_customers) != 3:
+                self.log_test("Final Stats Verification", False, f"Expected 3 test customers, found {len(test_customers)}")
+                return
                 
                 # Verify final expected stats
                 expected_final_stats = {
