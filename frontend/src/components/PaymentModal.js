@@ -181,6 +181,7 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
               </div>
               <button
                 onClick={() => setSelectedCustomer(null)}
+                data-testid="remove-customer-button"
                 className="text-red-500 hover:text-red-700 font-bold text-lg"
               >
                 ✕
