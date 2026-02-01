@@ -97,7 +97,7 @@ const ProductsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-teal-50 p-3" data-testid="products-page">
+    <div data-testid="products-page">
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-lg shadow p-3 mb-3">
           <div className="flex justify-between items-center">
