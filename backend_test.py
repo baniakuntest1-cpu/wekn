@@ -429,36 +429,34 @@ class CustomerIntegrationTester:
             if len(test_customers) != 3:
                 self.log_test("Final Stats Verification", False, f"Expected 3 test customers, found {len(test_customers)}")
                 return
+            
+            # Verify final expected stats
+            expected_final_stats = {
+                "John Doe": {"transactions": 2, "spent": 80000.0},
+                "Jane Smith": {"transactions": 1, "spent": 100000.0},
+                "Bob Wilson": {"transactions": 0, "spent": 0.0}
+            }
+            
+            validation_errors = []
+            
+            for customer in test_customers:
+                name = customer['name']
+                expected = expected_final_stats[name]
                 
-                # Verify final expected stats
-                expected_final_stats = {
-                    "John Doe": {"transactions": 2, "spent": 80000.0},
-                    "Jane Smith": {"transactions": 1, "spent": 100000.0},
-                    "Bob Wilson": {"transactions": 0, "spent": 0.0}
-                }
+                if customer['total_transactions'] != expected['transactions']:
+                    validation_errors.append(f"{name} transactions: expected {expected['transactions']}, got {customer['total_transactions']}")
                 
-                validation_errors = []
-                
-                for customer in test_customers:
-                    name = customer['name']
-                    expected = expected_final_stats[name]
-                    
-                    if customer['total_transactions'] != expected['transactions']:
-                        validation_errors.append(f"{name} transactions: expected {expected['transactions']}, got {customer['total_transactions']}")
-                    
-                    if customer['total_spent'] != expected['spent']:
-                        validation_errors.append(f"{name} spent: expected {expected['spent']}, got {customer['total_spent']}")
-                
-                if validation_errors:
-                    self.log_test("Final Stats Verification", False, f"Final validation errors: {'; '.join(validation_errors)}")
-                else:
-                    stats_summary = []
-                    for customer in test_customers:
-                        stats_summary.append(f"{customer['name']}: {customer['total_transactions']} transactions, Rp {customer['total_spent']}")
-                    
-                    self.log_test("Final Stats Verification", True, f"All final stats correct. Summary: {'; '.join(stats_summary)}")
+                if customer['total_spent'] != expected['spent']:
+                    validation_errors.append(f"{name} spent: expected {expected['spent']}, got {customer['total_spent']}")
+            
+            if validation_errors:
+                self.log_test("Final Stats Verification", False, f"Final validation errors: {'; '.join(validation_errors)}")
             else:
-                self.log_test("Final Stats Verification", False, f"Failed to get customers: HTTP {response.status_code}")
+                stats_summary = []
+                for customer in test_customers:
+                    stats_summary.append(f"{customer['name']}: {customer['total_transactions']} transactions, Rp {customer['total_spent']}")
+                
+                self.log_test("Final Stats Verification", True, f"All final stats correct. Summary: {'; '.join(stats_summary)}")
                 
         except Exception as e:
             self.log_test("Final Stats Verification", False, f"Request failed: {str(e)}")
