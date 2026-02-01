@@ -90,6 +90,43 @@ const CashierPage = () => {
     }
   };
 
+  const handleApplyItemDiscount = (item) => {
+    setDiscountTarget(item);
+    setShowDiscountModal(true);
+  };
+
+  const handleApplyTransactionDiscount = () => {
+    const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+    const itemsDiscount = cartItems.reduce((sum, item) => sum + (item.discount_amount || 0), 0);
+    const currentSubtotal = subtotal - itemsDiscount;
+    
+    setDiscountTarget({ type: 'transaction', amount: currentSubtotal });
+    setShowDiscountModal(true);
+  };
+
+  const handleDiscountApply = (discountData) => {
+    if (discountTarget.type === 'transaction') {
+      // Apply transaction discount
+      setTransactionDiscount(discountData);
+    } else {
+      // Apply item discount
+      setCartItems(cartItems.map(item => {
+        if (item.product_id === discountTarget.product_id) {
+          return {
+            ...item,
+            discount_type: discountData.type,
+            discount_value: discountData.value,
+            discount_amount: discountData.amount
+          };
+        }
+        return item;
+      }));
+    }
+    
+    setShowDiscountModal(false);
+    setDiscountTarget(null);
+  };
+
   const handleConfirmPayment = async (paymentData) => {
     try {
       const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
