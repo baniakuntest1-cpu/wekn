@@ -28,6 +28,7 @@ api_router = APIRouter(prefix="/api")
 from routes.products import setup_product_routes
 from routes.transactions import setup_transaction_routes
 from routes.reports import setup_report_routes
+from routes.customers import setup_customer_routes
 
 # Health check endpoint
 @api_router.get("/")
