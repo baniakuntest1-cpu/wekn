@@ -6,6 +6,7 @@ import uuid
 class PaymentMethod(BaseModel):
     method: str  # cash, qris, gopay, ovo, dana, shopeepay
     amount: float
+    reference: Optional[str] = None  # Transaction reference number
 
 class TransactionItem(BaseModel):
     product_id: str
