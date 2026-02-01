@@ -102,6 +102,11 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
       return;
     }
 
+    // Show confirmation dialog
+    setShowConfirmation(true);
+  };
+
+  const handleFinalConfirm = () => {
     const paymentMethods = payments.map(p => ({
       method: p.method,
       amount: p.amount,
@@ -125,6 +130,7 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
     setInputAmount('');
     setReference('');
     setPaymentType(null);
+    setShowConfirmation(false);
   };
 
   const handleRegisterCustomer = async () => {
