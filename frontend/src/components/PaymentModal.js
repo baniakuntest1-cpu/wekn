@@ -459,6 +459,7 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
                 type="text"
                 value={customerSearchTerm}
                 onChange={(e) => setCustomerSearchTerm(e.target.value)}
+                data-testid="customer-search-input"
                 className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm mb-3"
                 placeholder="🔍 Cari nama atau nomor telepon..."
               />
