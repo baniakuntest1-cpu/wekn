@@ -56,67 +56,67 @@ const ReportsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-teal-50 p-6" data-testid="reports-page">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-teal-50 p-3" data-testid="reports-page">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-800" data-testid="reports-title">
+        <div className="bg-white rounded-lg shadow p-3 mb-3">
+          <h1 className="text-2xl font-bold text-gray-800" data-testid="reports-title">
             📊 Laporan Penjualan
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-600 mt-1 text-sm">
             {dailyReport && formatDate(dailyReport.date)}
           </p>
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-green-100">Total Penjualan</span>
-              <span className="text-3xl">💰</span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow p-4 text-white">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-green-100 text-sm">Total Penjualan</span>
+              <span className="text-2xl">💰</span>
             </div>
-            <p className="text-3xl font-bold" data-testid="total-sales">
+            <p className="text-2xl font-bold" data-testid="total-sales">
               Rp {dailyReport?.total_sales?.toLocaleString('id-ID') || 0}
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-blue-100">Jumlah Transaksi</span>
-              <span className="text-3xl">📝</span>
+          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow p-4 text-white">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-blue-100 text-sm">Jumlah Transaksi</span>
+              <span className="text-2xl">📝</span>
             </div>
-            <p className="text-3xl font-bold" data-testid="total-transactions">
+            <p className="text-2xl font-bold" data-testid="total-transactions">
               {dailyReport?.total_transactions || 0}
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-purple-100">Rata-rata/Transaksi</span>
-              <span className="text-3xl">📈</span>
+          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow p-4 text-white">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-purple-100 text-sm">Rata-rata/Transaksi</span>
+              <span className="text-2xl">📈</span>
             </div>
-            <p className="text-3xl font-bold" data-testid="average-transaction">
+            <p className="text-2xl font-bold" data-testid="average-transaction">
               Rp {dailyReport?.average_transaction?.toLocaleString('id-ID', {maximumFractionDigits: 0}) || 0}
             </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
           {/* Product Sales */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-lg shadow p-4">
+            <h2 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
               🍞 Penjualan per Produk
             </h2>
             {dailyReport?.product_sales && dailyReport.product_sales.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {dailyReport.product_sales
                   .sort((a, b) => b.revenue - a.revenue)
                   .map((item, idx) => (
-                    <div key={idx} className="flex justify-between items-center bg-gray-50 rounded-lg p-4">
+                    <div key={idx} className="flex justify-between items-center bg-gray-50 rounded-lg p-3">
                       <div>
-                        <p className="font-semibold text-gray-800">{item.product_name}</p>
-                        <p className="text-sm text-gray-600">Terjual: {item.quantity} pcs</p>
+                        <p className="font-semibold text-gray-800 text-sm">{item.product_name}</p>
+                        <p className="text-xs text-gray-600">Terjual: {item.quantity} pcs</p>
                       </div>
-                      <p className="font-bold text-orange-600">
+                      <p className="font-bold text-orange-600 text-sm">
                         Rp {item.revenue.toLocaleString('id-ID')}
                       </p>
                     </div>
