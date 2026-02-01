@@ -50,6 +50,14 @@ function App() {
               </SidebarLayout>
             }
           />
+          <Route
+            path="/pelanggan"
+            element={
+              <SidebarLayout>
+                <CustomersPage />
+              </SidebarLayout>
+            }
+          />
 
           {/* Redirect old routes */}
           <Route path="/dashboard" element={<Navigate to="/" replace />} />
