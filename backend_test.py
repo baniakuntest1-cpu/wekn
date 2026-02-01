@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-Backend Test Suite for WEEKN POS Shift Management
-Tests the complete shift management flow including:
-1. Open shift
-2. Check active shift
-3. Create transactions with different payment methods
-4. Close shift with cash reconciliation
-5. View shift history
+Backend Test Suite for WEEKN POS Phase 2.3 - Customer Integration into Transaction
+Tests the complete customer integration flow including:
+1. Transaction with customer - verify customer stats update
+2. Transaction without customer - verify backward compatibility  
+3. Customer stats calculation - verify correct calculations
+4. Multiple customers - verify independent stats
 """
 
 import requests
@@ -18,11 +17,11 @@ from typing import Dict, Any
 # Get backend URL from environment
 BACKEND_URL = "https://weeknpos-1.preview.emergentagent.com/api"
 
-class ShiftManagementTester:
+class CustomerIntegrationTester:
     def __init__(self):
         self.base_url = BACKEND_URL
         self.test_results = []
-        self.shift_id = None
+        self.customer_ids = []
         self.transaction_ids = []
         
     def log_test(self, test_name: str, success: bool, message: str, details: Dict[Any, Any] = None):
@@ -40,116 +39,72 @@ class ShiftManagementTester:
         if details and not success:
             print(f"   Details: {json.dumps(details, indent=2)}")
     
-    def test_1_open_shift(self):
-        """Test opening a new shift"""
-        print("\n=== Test 1: Open Shift ===")
+    def cleanup_test_data(self):
+        """Clean up any existing test data"""
+        print("\n=== Cleanup: Removing existing test data ===")
         
-        # First, close any existing open shifts for clean test
-        try:
-            response = requests.get(f"{self.base_url}/shifts/active")
-            if response.status_code == 200 and response.json():
-                existing_shift = response.json()
-                close_response = requests.post(
-                    f"{self.base_url}/shifts/{existing_shift['id']}/close",
-                    json={"actual_cash": existing_shift['opening_cash']}
-                )
-                print(f"Closed existing shift: {existing_shift['id']}")
-        except Exception as e:
-            print(f"No existing shift to close: {e}")
-        
-        # Test opening a new shift
-        shift_data = {
-            "cashier_name": "Sari Bakery",
-            "opening_cash": 500000
-        }
-        
-        try:
-            response = requests.post(f"{self.base_url}/shifts/open", json=shift_data)
-            
-            if response.status_code == 200:
-                shift = response.json()
-                self.shift_id = shift['id']
-                
-                # Validate response structure
-                required_fields = ['id', 'cashier_name', 'opening_cash', 'opening_time', 'status']
-                missing_fields = [field for field in required_fields if field not in shift]
-                
-                if missing_fields:
-                    self.log_test("Open Shift", False, f"Missing fields: {missing_fields}", shift)
-                elif shift['status'] != 'open':
-                    self.log_test("Open Shift", False, f"Expected status 'open', got '{shift['status']}'", shift)
-                elif shift['cashier_name'] != shift_data['cashier_name']:
-                    self.log_test("Open Shift", False, "Cashier name mismatch", shift)
-                elif shift['opening_cash'] != shift_data['opening_cash']:
-                    self.log_test("Open Shift", False, "Opening cash mismatch", shift)
-                else:
-                    self.log_test("Open Shift", True, f"Shift opened successfully with ID: {self.shift_id}", shift)
-            else:
-                self.log_test("Open Shift", False, f"HTTP {response.status_code}: {response.text}")
-                
-        except Exception as e:
-            self.log_test("Open Shift", False, f"Request failed: {str(e)}")
+        # Clean up test customers
+        test_phones = ["081234567890", "081234567891", "081234567892"]
+        for phone in test_phones:
+            try:
+                # Search for customer by phone
+                response = requests.get(f"{self.base_url}/customers/search?q={phone}")
+                if response.status_code == 200:
+                    customers = response.json()
+                    for customer in customers:
+                        if customer.get('phone') == phone:
+                            delete_response = requests.delete(f"{self.base_url}/customers/{customer['id']}")
+                            if delete_response.status_code == 200:
+                                print(f"Deleted existing customer: {customer['name']} ({phone})")
+            except Exception as e:
+                print(f"Cleanup error for {phone}: {e}")
     
-    def test_2_duplicate_shift_prevention(self):
-        """Test that opening multiple shifts fails"""
-        print("\n=== Test 2: Duplicate Shift Prevention ===")
+    def test_1_create_test_customers(self):
+        """Test creating customers for testing"""
+        print("\n=== Test 1: Create Test Customers ===")
         
-        shift_data = {
-            "cashier_name": "Another Cashier",
-            "opening_cash": 300000
-        }
+        customers_data = [
+            {"name": "John Doe", "phone": "081234567890"},
+            {"name": "Jane Smith", "phone": "081234567891"},
+            {"name": "Bob Wilson", "phone": "081234567892"}
+        ]
         
-        try:
-            response = requests.post(f"{self.base_url}/shifts/open", json=shift_data)
-            
-            if response.status_code == 400:
-                error_msg = response.json().get('detail', '')
-                if "shift yang masih aktif" in error_msg.lower() or "active" in error_msg.lower():
-                    self.log_test("Duplicate Shift Prevention", True, "Correctly prevented duplicate shift opening")
-                else:
-                    self.log_test("Duplicate Shift Prevention", False, f"Wrong error message: {error_msg}")
-            else:
-                self.log_test("Duplicate Shift Prevention", False, f"Expected 400 error, got {response.status_code}")
+        for i, customer_data in enumerate(customers_data):
+            try:
+                response = requests.post(f"{self.base_url}/customers", json=customer_data)
                 
-        except Exception as e:
-            self.log_test("Duplicate Shift Prevention", False, f"Request failed: {str(e)}")
-    
-    def test_3_get_active_shift(self):
-        """Test getting the active shift"""
-        print("\n=== Test 3: Get Active Shift ===")
-        
-        try:
-            response = requests.get(f"{self.base_url}/shifts/active")
-            
-            if response.status_code == 200:
-                shift = response.json()
-                
-                if not shift:
-                    self.log_test("Get Active Shift", False, "No active shift returned")
-                elif shift['id'] != self.shift_id:
-                    self.log_test("Get Active Shift", False, f"Wrong shift ID returned: {shift['id']} vs {self.shift_id}")
-                elif shift['status'] != 'open':
-                    self.log_test("Get Active Shift", False, f"Wrong status: {shift['status']}")
-                else:
-                    required_fields = ['id', 'cashier_name', 'opening_cash', 'opening_time', 'status']
-                    missing_fields = [field for field in required_fields if field not in shift]
+                if response.status_code == 200:
+                    customer = response.json()
+                    self.customer_ids.append(customer['id'])
+                    
+                    # Validate customer structure
+                    required_fields = ['id', 'name', 'phone', 'registered_date', 'total_transactions', 'total_spent']
+                    missing_fields = [field for field in required_fields if field not in customer]
                     
                     if missing_fields:
-                        self.log_test("Get Active Shift", False, f"Missing fields: {missing_fields}", shift)
+                        self.log_test(f"Create Customer {i+1}", False, f"Missing fields: {missing_fields}", customer)
+                    elif customer['total_transactions'] != 0:
+                        self.log_test(f"Create Customer {i+1}", False, f"Initial total_transactions should be 0, got {customer['total_transactions']}")
+                    elif customer['total_spent'] != 0.0:
+                        self.log_test(f"Create Customer {i+1}", False, f"Initial total_spent should be 0.0, got {customer['total_spent']}")
                     else:
-                        self.log_test("Get Active Shift", True, "Active shift retrieved successfully", shift)
-            else:
-                self.log_test("Get Active Shift", False, f"HTTP {response.status_code}: {response.text}")
-                
-        except Exception as e:
-            self.log_test("Get Active Shift", False, f"Request failed: {str(e)}")
+                        self.log_test(f"Create Customer {i+1}", True, f"Customer created: {customer['name']} (ID: {customer['id']})")
+                else:
+                    self.log_test(f"Create Customer {i+1}", False, f"HTTP {response.status_code}: {response.text}")
+                    
+            except Exception as e:
+                self.log_test(f"Create Customer {i+1}", False, f"Request failed: {str(e)}")
     
-    def test_4_create_transactions(self):
-        """Test creating transactions with different payment methods"""
-        print("\n=== Test 4: Create Transactions ===")
+    def test_2_transaction_with_customer(self):
+        """Test creating transaction with customer_id and customer_name"""
+        print("\n=== Test 2: Transaction with Customer ===")
         
-        # Transaction 1: Cash payment (50,000)
-        transaction1 = {
+        if not self.customer_ids:
+            self.log_test("Transaction with Customer", False, "No customer IDs available")
+            return
+        
+        # Transaction for John Doe (50,000)
+        transaction_data = {
             "items": [
                 {
                     "product_id": "test-product-1",
@@ -168,42 +123,211 @@ class ShiftManagementTester:
                     "amount": 50000
                 }
             ],
-            "cashier_name": "Sari Bakery"
+            "cashier_name": "Sari Bakery",
+            "customer_id": self.customer_ids[0],  # John Doe
+            "customer_name": "John Doe"
         }
         
-        # Transaction 2: Split payment (30,000 cash + 20,000 QRIS)
-        transaction2 = {
+        try:
+            response = requests.post(f"{self.base_url}/transactions", json=transaction_data)
+            
+            if response.status_code == 200:
+                transaction = response.json()
+                self.transaction_ids.append(transaction['id'])
+                
+                # Validate transaction structure
+                validation_errors = []
+                
+                if transaction.get('customer_id') != self.customer_ids[0]:
+                    validation_errors.append(f"customer_id mismatch: expected {self.customer_ids[0]}, got {transaction.get('customer_id')}")
+                
+                if transaction.get('customer_name') != "John Doe":
+                    validation_errors.append(f"customer_name mismatch: expected 'John Doe', got '{transaction.get('customer_name')}'")
+                
+                if transaction.get('total') != 50000:
+                    validation_errors.append(f"total mismatch: expected 50000, got {transaction.get('total')}")
+                
+                if validation_errors:
+                    self.log_test("Transaction with Customer", False, f"Validation errors: {'; '.join(validation_errors)}", transaction)
+                else:
+                    self.log_test("Transaction with Customer", True, f"Transaction created with customer info: {transaction['id']}")
+            else:
+                self.log_test("Transaction with Customer", False, f"HTTP {response.status_code}: {response.text}")
+                
+        except Exception as e:
+            self.log_test("Transaction with Customer", False, f"Request failed: {str(e)}")
+    
+    def test_3_verify_customer_stats_update(self):
+        """Test that customer stats are updated correctly after transaction"""
+        print("\n=== Test 3: Verify Customer Stats Update ===")
+        
+        if not self.customer_ids:
+            self.log_test("Customer Stats Update", False, "No customer IDs available")
+            return
+        
+        try:
+            # Get John Doe's updated stats
+            response = requests.get(f"{self.base_url}/customers/{self.customer_ids[0]}")
+            
+            if response.status_code == 200:
+                customer = response.json()
+                
+                validation_errors = []
+                
+                if customer.get('total_transactions') != 1:
+                    validation_errors.append(f"total_transactions should be 1, got {customer.get('total_transactions')}")
+                
+                if customer.get('total_spent') != 50000.0:
+                    validation_errors.append(f"total_spent should be 50000.0, got {customer.get('total_spent')}")
+                
+                if validation_errors:
+                    self.log_test("Customer Stats Update", False, f"Validation errors: {'; '.join(validation_errors)}", customer)
+                else:
+                    self.log_test("Customer Stats Update", True, f"Customer stats updated correctly: {customer['total_transactions']} transactions, Rp {customer['total_spent']} spent")
+            else:
+                self.log_test("Customer Stats Update", False, f"HTTP {response.status_code}: {response.text}")
+                
+        except Exception as e:
+            self.log_test("Customer Stats Update", False, f"Request failed: {str(e)}")
+    
+    def test_4_transaction_without_customer(self):
+        """Test creating transaction without customer (backward compatibility)"""
+        print("\n=== Test 4: Transaction without Customer ===")
+        
+        transaction_data = {
             "items": [
                 {
                     "product_id": "test-product-2",
                     "product_name": "Kue Lapis",
                     "quantity": 1,
-                    "price": 50000,
-                    "subtotal": 50000
+                    "price": 30000,
+                    "subtotal": 30000
                 }
             ],
-            "subtotal": 50000,
+            "subtotal": 30000,
             "discount_amount": 0,
-            "total": 50000,
+            "total": 30000,
             "payment_methods": [
                 {
                     "method": "cash",
                     "amount": 30000
-                },
-                {
-                    "method": "qris",
-                    "amount": 20000,
-                    "reference": "QRIS123456"
                 }
             ],
             "cashier_name": "Sari Bakery"
+            # No customer_id or customer_name
         }
         
-        # Transaction 3: Non-cash payment (100,000 GoPay)
-        transaction3 = {
+        try:
+            response = requests.post(f"{self.base_url}/transactions", json=transaction_data)
+            
+            if response.status_code == 200:
+                transaction = response.json()
+                self.transaction_ids.append(transaction['id'])
+                
+                # Validate transaction structure
+                validation_errors = []
+                
+                if transaction.get('customer_id') is not None:
+                    validation_errors.append(f"customer_id should be null, got {transaction.get('customer_id')}")
+                
+                if transaction.get('customer_name') is not None:
+                    validation_errors.append(f"customer_name should be null, got {transaction.get('customer_name')}")
+                
+                if transaction.get('total') != 30000:
+                    validation_errors.append(f"total mismatch: expected 30000, got {transaction.get('total')}")
+                
+                if validation_errors:
+                    self.log_test("Transaction without Customer", False, f"Validation errors: {'; '.join(validation_errors)}", transaction)
+                else:
+                    self.log_test("Transaction without Customer", True, f"Transaction created without customer: {transaction['id']}")
+            else:
+                self.log_test("Transaction without Customer", False, f"HTTP {response.status_code}: {response.text}")
+                
+        except Exception as e:
+            self.log_test("Transaction without Customer", False, f"Request failed: {str(e)}")
+    
+    def test_5_customer_stats_calculation(self):
+        """Test customer stats calculation with multiple transactions"""
+        print("\n=== Test 5: Customer Stats Calculation ===")
+        
+        if not self.customer_ids:
+            self.log_test("Customer Stats Calculation", False, "No customer IDs available")
+            return
+        
+        # Create second transaction for John Doe (30,000)
+        transaction_data = {
             "items": [
                 {
                     "product_id": "test-product-3",
+                    "product_name": "Brownies",
+                    "quantity": 1,
+                    "price": 30000,
+                    "subtotal": 30000
+                }
+            ],
+            "subtotal": 30000,
+            "discount_amount": 0,
+            "total": 30000,
+            "payment_methods": [
+                {
+                    "method": "qris",
+                    "amount": 30000,
+                    "reference": "QRIS123456"
+                }
+            ],
+            "cashier_name": "Sari Bakery",
+            "customer_id": self.customer_ids[0],  # John Doe again
+            "customer_name": "John Doe"
+        }
+        
+        try:
+            # Create second transaction
+            response = requests.post(f"{self.base_url}/transactions", json=transaction_data)
+            
+            if response.status_code == 200:
+                transaction = response.json()
+                self.transaction_ids.append(transaction['id'])
+                
+                # Verify John Doe's updated stats
+                customer_response = requests.get(f"{self.base_url}/customers/{self.customer_ids[0]}")
+                
+                if customer_response.status_code == 200:
+                    customer = customer_response.json()
+                    
+                    validation_errors = []
+                    
+                    # Should have 2 transactions totaling 80,000
+                    if customer.get('total_transactions') != 2:
+                        validation_errors.append(f"total_transactions should be 2, got {customer.get('total_transactions')}")
+                    
+                    if customer.get('total_spent') != 80000.0:
+                        validation_errors.append(f"total_spent should be 80000.0, got {customer.get('total_spent')}")
+                    
+                    if validation_errors:
+                        self.log_test("Customer Stats Calculation", False, f"Validation errors: {'; '.join(validation_errors)}", customer)
+                    else:
+                        self.log_test("Customer Stats Calculation", True, f"Customer stats calculated correctly: {customer['total_transactions']} transactions, Rp {customer['total_spent']} total")
+                else:
+                    self.log_test("Customer Stats Calculation", False, f"Failed to get customer: HTTP {customer_response.status_code}")
+            else:
+                self.log_test("Customer Stats Calculation", False, f"Failed to create transaction: HTTP {response.status_code}: {response.text}")
+                
+        except Exception as e:
+            self.log_test("Customer Stats Calculation", False, f"Request failed: {str(e)}")
+    
+    def test_6_multiple_customers_independence(self):
+        """Test that multiple customers have independent stats"""
+        print("\n=== Test 6: Multiple Customers Independence ===")
+        
+        if len(self.customer_ids) < 2:
+            self.log_test("Multiple Customers Independence", False, "Need at least 2 customer IDs")
+            return
+        
+        # Create transaction for Jane Smith (100,000)
+        transaction_data = {
+            "items": [
+                {
+                    "product_id": "test-product-4",
                     "product_name": "Birthday Cake",
                     "quantity": 1,
                     "price": 100000,
@@ -220,208 +344,140 @@ class ShiftManagementTester:
                     "reference": "GP789012"
                 }
             ],
-            "cashier_name": "Sari Bakery"
-        }
-        
-        transactions = [
-            ("Cash Payment (50k)", transaction1),
-            ("Split Payment (30k cash + 20k QRIS)", transaction2),
-            ("Non-cash Payment (100k GoPay)", transaction3)
-        ]
-        
-        for test_name, transaction_data in transactions:
-            try:
-                response = requests.post(f"{self.base_url}/transactions", json=transaction_data)
-                
-                if response.status_code == 200:
-                    transaction = response.json()
-                    self.transaction_ids.append(transaction['id'])
-                    
-                    # Validate transaction structure
-                    if transaction['cashier_name'] != transaction_data['cashier_name']:
-                        self.log_test(f"Create Transaction - {test_name}", False, "Cashier name mismatch")
-                    elif transaction['total'] != transaction_data['total']:
-                        self.log_test(f"Create Transaction - {test_name}", False, "Total amount mismatch")
-                    else:
-                        self.log_test(f"Create Transaction - {test_name}", True, f"Transaction created: {transaction['id']}")
-                else:
-                    self.log_test(f"Create Transaction - {test_name}", False, f"HTTP {response.status_code}: {response.text}")
-                    
-            except Exception as e:
-                self.log_test(f"Create Transaction - {test_name}", False, f"Request failed: {str(e)}")
-    
-    def test_5_close_shift(self):
-        """Test closing the shift with cash reconciliation"""
-        print("\n=== Test 5: Close Shift ===")
-        
-        if not self.shift_id:
-            self.log_test("Close Shift", False, "No shift ID available for closing")
-            return
-        
-        # Expected cash calculation:
-        # Opening cash: 500,000
-        # Cash from Transaction 1: 50,000
-        # Cash from Transaction 2: 30,000 (split payment)
-        # Cash from Transaction 3: 0 (GoPay only)
-        # Expected total: 500,000 + 50,000 + 30,000 = 580,000
-        
-        close_data = {
-            "actual_cash": 580000  # Should have 0 discrepancy
+            "cashier_name": "Sari Bakery",
+            "customer_id": self.customer_ids[1],  # Jane Smith
+            "customer_name": "Jane Smith"
         }
         
         try:
-            response = requests.post(f"{self.base_url}/shifts/{self.shift_id}/close", json=close_data)
+            # Create transaction for Jane Smith
+            response = requests.post(f"{self.base_url}/transactions", json=transaction_data)
             
             if response.status_code == 200:
-                closed_shift = response.json()
+                transaction = response.json()
+                self.transaction_ids.append(transaction['id'])
                 
-                # Validate calculations
-                expected_cash = closed_shift.get('expected_cash')
-                actual_cash = closed_shift.get('actual_cash')
-                discrepancy = closed_shift.get('discrepancy')
-                total_sales = closed_shift.get('total_sales')
+                # Verify all customers' stats
+                customers_stats = []
+                for i, customer_id in enumerate(self.customer_ids):
+                    customer_response = requests.get(f"{self.base_url}/customers/{customer_id}")
+                    if customer_response.status_code == 200:
+                        customer = customer_response.json()
+                        customers_stats.append({
+                            "name": customer['name'],
+                            "transactions": customer['total_transactions'],
+                            "spent": customer['total_spent']
+                        })
+                
+                # Expected stats:
+                # John Doe: 2 transactions, 80,000 total
+                # Jane Smith: 1 transaction, 100,000 total  
+                # Bob Wilson: 0 transactions, 0 total
+                expected_stats = [
+                    {"name": "John Doe", "transactions": 2, "spent": 80000.0},
+                    {"name": "Jane Smith", "transactions": 1, "spent": 100000.0},
+                    {"name": "Bob Wilson", "transactions": 0, "spent": 0.0}
+                ]
                 
                 validation_errors = []
                 
-                if closed_shift.get('status') != 'closed':
-                    validation_errors.append(f"Status should be 'closed', got '{closed_shift.get('status')}'")
-                
-                if expected_cash != 580000:
-                    validation_errors.append(f"Expected cash should be 580000, got {expected_cash}")
-                
-                if actual_cash != 580000:
-                    validation_errors.append(f"Actual cash should be 580000, got {actual_cash}")
-                
-                if discrepancy != 0:
-                    validation_errors.append(f"Discrepancy should be 0, got {discrepancy}")
-                
-                if total_sales != 200000:  # 50k + 50k + 100k
-                    validation_errors.append(f"Total sales should be 200000, got {total_sales}")
+                for i, (actual, expected) in enumerate(zip(customers_stats, expected_stats)):
+                    if actual['name'] != expected['name']:
+                        validation_errors.append(f"Customer {i+1} name mismatch: expected {expected['name']}, got {actual['name']}")
+                    if actual['transactions'] != expected['transactions']:
+                        validation_errors.append(f"{actual['name']} transactions: expected {expected['transactions']}, got {actual['transactions']}")
+                    if actual['spent'] != expected['spent']:
+                        validation_errors.append(f"{actual['name']} spent: expected {expected['spent']}, got {actual['spent']}")
                 
                 if validation_errors:
-                    self.log_test("Close Shift", False, f"Validation errors: {'; '.join(validation_errors)}", closed_shift)
+                    self.log_test("Multiple Customers Independence", False, f"Validation errors: {'; '.join(validation_errors)}", {
+                        "actual_stats": customers_stats,
+                        "expected_stats": expected_stats
+                    })
                 else:
-                    self.log_test("Close Shift", True, "Shift closed successfully with correct calculations", {
-                        "expected_cash": expected_cash,
-                        "actual_cash": actual_cash,
-                        "discrepancy": discrepancy,
-                        "total_sales": total_sales
+                    self.log_test("Multiple Customers Independence", True, "All customers have correct independent stats", {
+                        "customer_stats": customers_stats
                     })
             else:
-                self.log_test("Close Shift", False, f"HTTP {response.status_code}: {response.text}")
+                self.log_test("Multiple Customers Independence", False, f"Failed to create transaction: HTTP {response.status_code}: {response.text}")
                 
         except Exception as e:
-            self.log_test("Close Shift", False, f"Request failed: {str(e)}")
+            self.log_test("Multiple Customers Independence", False, f"Request failed: {str(e)}")
     
-    def test_6_duplicate_close_prevention(self):
-        """Test that closing a shift twice fails"""
-        print("\n=== Test 6: Duplicate Close Prevention ===")
-        
-        if not self.shift_id:
-            self.log_test("Duplicate Close Prevention", False, "No shift ID available")
-            return
-        
-        close_data = {
-            "actual_cash": 580000
-        }
+    def test_7_verify_final_stats(self):
+        """Final verification of all customer stats"""
+        print("\n=== Test 7: Final Stats Verification ===")
         
         try:
-            response = requests.post(f"{self.base_url}/shifts/{self.shift_id}/close", json=close_data)
-            
-            if response.status_code == 400:
-                error_msg = response.json().get('detail', '')
-                if "sudah ditutup" in error_msg.lower() or "already closed" in error_msg.lower():
-                    self.log_test("Duplicate Close Prevention", True, "Correctly prevented duplicate shift closing")
-                else:
-                    self.log_test("Duplicate Close Prevention", False, f"Wrong error message: {error_msg}")
-            else:
-                self.log_test("Duplicate Close Prevention", False, f"Expected 400 error, got {response.status_code}")
-                
-        except Exception as e:
-            self.log_test("Duplicate Close Prevention", False, f"Request failed: {str(e)}")
-    
-    def test_7_shift_history(self):
-        """Test viewing shift history"""
-        print("\n=== Test 7: Shift History ===")
-        
-        try:
-            response = requests.get(f"{self.base_url}/shifts")
+            # Get all customers and verify final stats
+            response = requests.get(f"{self.base_url}/customers")
             
             if response.status_code == 200:
-                shifts = response.json()
+                all_customers = response.json()
                 
-                if not isinstance(shifts, list):
-                    self.log_test("Shift History", False, "Response should be a list")
-                elif len(shifts) == 0:
-                    self.log_test("Shift History", False, "No shifts returned")
-                else:
-                    # Find our test shift
-                    test_shift = None
-                    for shift in shifts:
-                        if shift.get('id') == self.shift_id:
-                            test_shift = shift
-                            break
+                # Find our test customers
+                test_customers = []
+                test_names = ["John Doe", "Jane Smith", "Bob Wilson"]
+                
+                for name in test_names:
+                    customer = next((c for c in all_customers if c['name'] == name), None)
+                    if customer:
+                        test_customers.append(customer)
+                
+                if len(test_customers) != 3:
+                    self.log_test("Final Stats Verification", False, f"Expected 3 test customers, found {len(test_customers)}")
+                    return
+                
+                # Verify final expected stats
+                expected_final_stats = {
+                    "John Doe": {"transactions": 2, "spent": 80000.0},
+                    "Jane Smith": {"transactions": 1, "spent": 100000.0},
+                    "Bob Wilson": {"transactions": 0, "spent": 0.0}
+                }
+                
+                validation_errors = []
+                
+                for customer in test_customers:
+                    name = customer['name']
+                    expected = expected_final_stats[name]
                     
-                    if not test_shift:
-                        self.log_test("Shift History", False, f"Test shift {self.shift_id} not found in history")
-                    elif test_shift.get('status') != 'closed':
-                        self.log_test("Shift History", False, f"Test shift status should be 'closed', got '{test_shift.get('status')}'")
-                    else:
-                        # Check if shifts are sorted by opening_time descending
-                        is_sorted = True
-                        for i in range(len(shifts) - 1):
-                            if shifts[i].get('opening_time', '') < shifts[i + 1].get('opening_time', ''):
-                                is_sorted = False
-                                break
-                        
-                        if not is_sorted:
-                            self.log_test("Shift History", False, "Shifts not sorted by opening_time descending")
-                        else:
-                            self.log_test("Shift History", True, f"Shift history retrieved successfully ({len(shifts)} shifts)", {
-                                "total_shifts": len(shifts),
-                                "test_shift_found": True
-                            })
-            else:
-                self.log_test("Shift History", False, f"HTTP {response.status_code}: {response.text}")
+                    if customer['total_transactions'] != expected['transactions']:
+                        validation_errors.append(f"{name} transactions: expected {expected['transactions']}, got {customer['total_transactions']}")
+                    
+                    if customer['total_spent'] != expected['spent']:
+                        validation_errors.append(f"{name} spent: expected {expected['spent']}, got {customer['total_spent']}")
                 
-        except Exception as e:
-            self.log_test("Shift History", False, f"Request failed: {str(e)}")
-    
-    def test_8_no_active_shift_after_close(self):
-        """Test that no active shift exists after closing"""
-        print("\n=== Test 8: No Active Shift After Close ===")
-        
-        try:
-            response = requests.get(f"{self.base_url}/shifts/active")
-            
-            if response.status_code == 200:
-                active_shift = response.json()
-                
-                if active_shift is None:
-                    self.log_test("No Active Shift After Close", True, "Correctly returns null for active shift")
+                if validation_errors:
+                    self.log_test("Final Stats Verification", False, f"Final validation errors: {'; '.join(validation_errors)}")
                 else:
-                    self.log_test("No Active Shift After Close", False, f"Active shift still exists: {active_shift.get('id')}")
+                    stats_summary = []
+                    for customer in test_customers:
+                        stats_summary.append(f"{customer['name']}: {customer['total_transactions']} transactions, Rp {customer['total_spent']}")
+                    
+                    self.log_test("Final Stats Verification", True, f"All final stats correct. Summary: {'; '.join(stats_summary)}")
             else:
-                self.log_test("No Active Shift After Close", False, f"HTTP {response.status_code}: {response.text}")
+                self.log_test("Final Stats Verification", False, f"Failed to get customers: HTTP {response.status_code}")
                 
         except Exception as e:
-            self.log_test("No Active Shift After Close", False, f"Request failed: {str(e)}")
+            self.log_test("Final Stats Verification", False, f"Request failed: {str(e)}")
     
     def run_all_tests(self):
-        """Run all shift management tests"""
-        print(f"🚀 Starting Shift Management Tests")
+        """Run all customer integration tests"""
+        print(f"🚀 Starting Phase 2.3 Customer Integration Tests")
         print(f"Backend URL: {self.base_url}")
         print("=" * 60)
         
+        # Cleanup first
+        self.cleanup_test_data()
+        
         # Run tests in sequence
-        self.test_1_open_shift()
-        self.test_2_duplicate_shift_prevention()
-        self.test_3_get_active_shift()
-        self.test_4_create_transactions()
-        self.test_5_close_shift()
-        self.test_6_duplicate_close_prevention()
-        self.test_7_shift_history()
-        self.test_8_no_active_shift_after_close()
+        self.test_1_create_test_customers()
+        self.test_2_transaction_with_customer()
+        self.test_3_verify_customer_stats_update()
+        self.test_4_transaction_without_customer()
+        self.test_5_customer_stats_calculation()
+        self.test_6_multiple_customers_independence()
+        self.test_7_verify_final_stats()
         
         # Summary
         print("\n" + "=" * 60)
@@ -454,7 +510,7 @@ class ShiftManagementTester:
         return passed == total
 
 if __name__ == "__main__":
-    tester = ShiftManagementTester()
+    tester = CustomerIntegrationTester()
     success = tester.run_all_tests()
     
     if success:
