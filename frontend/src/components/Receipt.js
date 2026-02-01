@@ -51,6 +51,23 @@ const Receipt = ({ transaction, onClose, autoPrint = true }) => {
               </div>
             ))}
             <div className="border-t border-gray-300 mt-2 pt-2">
+              {/* Subtotal */}
+              {transaction.discount_amount > 0 && (
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-gray-600">Subtotal</span>
+                  <span>Rp {(transaction.subtotal || transaction.total).toLocaleString('id-ID')}</span>
+                </div>
+              )}
+              
+              {/* Discount */}
+              {transaction.discount_amount > 0 && (
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-green-600">Diskon</span>
+                  <span className="text-green-600">- Rp {transaction.discount_amount.toLocaleString('id-ID')}</span>
+                </div>
+              )}
+              
+              {/* Total */}
               <div className="flex justify-between font-bold">
                 <span>TOTAL</span>
                 <span>Rp {transaction.total.toLocaleString('id-ID')}</span>
