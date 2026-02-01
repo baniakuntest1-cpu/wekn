@@ -1,4 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const NON_CASH_METHODS = [
   { id: 'qris', name: 'QRIS' },
@@ -15,6 +19,29 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
   const [nonCashMethod, setNonCashMethod] = useState('qris');
   const [inputAmount, setInputAmount] = useState('');
   const [reference, setReference] = useState('');
+  
+  // Customer states
+  const [customers, setCustomers] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [newCustomerName, setNewCustomerName] = useState('');
+  const [newCustomerPhone, setNewCustomerPhone] = useState('');
+  const [customerSearchTerm, setCustomerSearchTerm] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchCustomers();
+    }
+  }, [isOpen]);
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await axios.get(`${API}/customers`);
+      setCustomers(response.data);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+    }
+  };
 
   const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
   const remaining = total - totalPaid;
@@ -81,7 +108,9 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
       payment_methods: paymentMethods,
       cash_received: cashPayment ? cashPayment.amount : null,
       change: change,
-      cashier_name: cashierName
+      cashier_name: cashierName,
+      customer_id: selectedCustomer?.id || null,
+      customer_name: selectedCustomer?.name || null
     });
     
     // Reset
