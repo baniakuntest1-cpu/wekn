@@ -44,8 +44,10 @@ const ShiftModal = ({ isOpen, onClose, onOpenShift, onCloseShift, mode, activeSh
 
   if (!isOpen) return null;
 
-  const expected = activeShift ? activeShift.opening_cash + (activeShift.total_sales || 0) : 0;
-  const discrepancy = parseFloat(actualCash) - expected;
+  // Note: expected_cash should be calculated on backend (opening_cash + cash_sales only)
+  // For preview during input, we'll show a simplified calculation
+  const expected = activeShift ? activeShift.opening_cash : 0;
+  const discrepancy = actualCash ? parseFloat(actualCash) - expected : 0;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" data-testid="shift-modal">
@@ -140,15 +142,11 @@ const ShiftModal = ({ isOpen, onClose, onOpenShift, onCloseShift, mode, activeSh
               </div>
             </div>
 
-            {/* Expected Cash */}
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-gray-700">Cash yang Diharapkan:</span>
-                <span className="text-xl font-bold text-orange-600">
-                  Rp {expected.toLocaleString('id-ID')}
-                </span>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">Modal Awal + Penjualan Tunai</p>
+            {/* Info Note */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-blue-800">
+                💡 <strong>Petunjuk:</strong> Hitung semua uang tunai di laci kasir. Sistem akan menghitung cash yang diharapkan berdasarkan modal awal + penjualan tunai selama shift ini.
+              </p>
             </div>
 
             {/* Actual Cash Input */}
@@ -168,20 +166,7 @@ const ShiftModal = ({ isOpen, onClose, onOpenShift, onCloseShift, mode, activeSh
               <p className="text-xs text-gray-500 mt-1">Hitung uang tunai yang ada di laci kasir</p>
             </div>
 
-            {/* Discrepancy Preview */}
-            {actualCash && !isNaN(parseFloat(actualCash)) && (
-              <div className={`${discrepancy === 0 ? 'bg-green-50 border-green-300' : discrepancy > 0 ? 'bg-blue-50 border-blue-300' : 'bg-red-50 border-red-300'} border-2 rounded-lg p-4 mb-4`}>
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-gray-700">Selisih:</span>
-                  <span className={`text-xl font-bold ${discrepancy === 0 ? 'text-green-600' : discrepancy > 0 ? 'text-blue-600' : 'text-red-600'}`}>
-                    {discrepancy === 0 ? '✅ Pas' : discrepancy > 0 ? `+ Rp ${Math.abs(discrepancy).toLocaleString('id-ID')}` : `- Rp ${Math.abs(discrepancy).toLocaleString('id-ID')}`}
-                  </span>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  {discrepancy === 0 ? 'Cash sesuai dengan yang diharapkan' : discrepancy > 0 ? 'Cash lebih dari yang diharapkan' : 'Cash kurang dari yang diharapkan'}
-                </p>
-              </div>
-            )}
+            {/* Note: Actual discrepancy will be calculated on backend */}
 
             {/* Actions */}
             <div className="flex space-x-3">
