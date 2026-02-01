@@ -160,20 +160,20 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" data-testid="payment-modal">
-      <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] flex flex-col">
+      <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[85vh] flex flex-col">
         {/* Header */}
-        <div className="p-6 pb-3">
-          <h2 className="text-2xl font-bold text-gray-800 text-center" data-testid="payment-modal-title">
+        <div className="p-3 pb-2">
+          <h2 className="text-lg font-bold text-gray-800 text-center" data-testid="payment-modal-title">
             💳 Pembayaran
           </h2>
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto px-6 pb-4">
+        <div className="flex-1 overflow-y-auto px-4 pb-2">
           {/* Total Belanja */}
-          <div className="bg-orange-50 rounded-lg p-4 mb-4">
-            <p className="text-xs text-gray-600 mb-1">Total Belanja:</p>
-            <p className="text-3xl font-bold text-orange-600" data-testid="payment-total">
+          <div className="bg-orange-50 rounded-lg p-2 mb-3">
+            <p className="text-xs text-gray-600">Total Belanja:</p>
+            <p className="text-xl font-bold text-orange-600" data-testid="payment-total">
               Rp {total.toLocaleString('id-ID')}
             </p>
           </div>
