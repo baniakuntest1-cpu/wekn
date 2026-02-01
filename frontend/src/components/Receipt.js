@@ -130,14 +130,23 @@ const Receipt = ({ transaction, onClose, autoPrint = true }) => {
               <span>TOTAL</span>
               <span>Rp {transaction.total.toLocaleString('id-ID')}</span>
             </div>
-            <div className="payment-row">
-              <span>Tunai</span>
-              <span>Rp {transaction.cash_received.toLocaleString('id-ID')}</span>
-            </div>
-            <div className="payment-row bold">
-              <span>Kembali</span>
-              <span>Rp {transaction.change.toLocaleString('id-ID')}</span>
-            </div>
+            {transaction.payment_methods && transaction.payment_methods.length > 0 && (
+              <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed #000' }}>
+                <div style={{ fontSize: '10px', marginBottom: '4px' }}>Pembayaran:</div>
+                {transaction.payment_methods.map((pm, idx) => (
+                  <div key={idx} className="payment-row">
+                    <span style={{ textTransform: 'capitalize' }}>{pm.method}</span>
+                    <span>Rp {pm.amount.toLocaleString('id-ID')}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {transaction.change > 0 && (
+              <div className="payment-row bold" style={{ marginTop: '4px' }}>
+                <span>Kembali</span>
+                <span>Rp {transaction.change.toLocaleString('id-ID')}</span>
+              </div>
+            )}
           </div>
 
           <div className="receipt-footer">
