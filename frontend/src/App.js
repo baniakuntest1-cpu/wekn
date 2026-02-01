@@ -8,6 +8,7 @@ import CashierPage from "./pages/CashierPage";
 import ProductsPage from "./pages/ProductsPage";
 import ReportsPage from "./pages/ReportsPage";
 import CustomersPage from "./pages/CustomersPage";
+import ShiftPage from "./pages/ShiftPage";
 
 function App() {
   return (
@@ -55,6 +56,14 @@ function App() {
             element={
               <SidebarLayout>
                 <CustomersPage />
+              </SidebarLayout>
+            }
+          />
+          <Route
+            path="/shifts"
+            element={
+              <SidebarLayout>
+                <ShiftPage />
               </SidebarLayout>
             }
           />

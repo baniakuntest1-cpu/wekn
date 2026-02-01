@@ -6,6 +6,7 @@ const MENU_ITEMS = [
     section: 'TRANSAKSI',
     items: [
       { path: '/kasir', icon: '💰', label: 'Kasir', fullscreen: true },
+      { path: '/shifts', icon: '💼', label: 'Shift Kasir' },
       { path: '/riwayat', icon: '📝', label: 'Riwayat' }
     ]
   },
