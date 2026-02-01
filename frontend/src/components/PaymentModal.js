@@ -428,6 +428,7 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
                   type="text"
                   value={newCustomerName}
                   onChange={(e) => setNewCustomerName(e.target.value)}
+                  data-testid="new-customer-name-input"
                   className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none text-sm"
                   placeholder="Nama customer"
                 />
@@ -437,12 +438,14 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
                   type="tel"
                   value={newCustomerPhone}
                   onChange={(e) => setNewCustomerPhone(e.target.value)}
+                  data-testid="new-customer-phone-input"
                   className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none text-sm"
                   placeholder="Nomor telepon"
                 />
               </div>
               <button
                 onClick={handleRegisterCustomer}
+                data-testid="register-and-select-button"
                 className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg"
               >
                 ✅ Daftar & Pilih
