@@ -97,51 +97,51 @@ const ProductsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-teal-50 p-6" data-testid="products-page">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-teal-50 p-3" data-testid="products-page">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div className="bg-white rounded-lg shadow p-3 mb-3">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-800" data-testid="products-title">
+            <h1 className="text-2xl font-bold text-gray-800" data-testid="products-title">
               🍞 Manajemen Produk
             </h1>
             <button
               onClick={() => handleOpenModal()}
               data-testid="add-product-button"
-              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold px-6 py-3 rounded-lg transition-all shadow-lg"
+              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold px-4 py-2 text-sm rounded-lg transition-all shadow"
             >
               + Tambah Produk
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {products.map((product) => (
-            <div key={product.id} className="bg-white rounded-xl shadow-lg overflow-hidden" data-testid={`product-card-${product.id}`}>
-              <div className="bg-gradient-to-br from-orange-100 to-teal-100 h-48 flex items-center justify-center text-6xl">
+            <div key={product.id} className="bg-white rounded-lg shadow overflow-hidden" data-testid={`product-card-${product.id}`}>
+              <div className="bg-gradient-to-br from-orange-100 to-teal-100 h-32 flex items-center justify-center text-4xl">
                 🍞
               </div>
-              <div className="p-6">
-                <h3 className="font-bold text-xl text-gray-800 mb-2" data-testid={`product-card-name-${product.id}`}>{product.name}</h3>
-                <p className="text-orange-600 font-bold text-2xl mb-2">Rp {product.price.toLocaleString('id-ID')}</p>
-                <div className="space-y-1 text-sm text-gray-600 mb-4">
-                  <p>🏷️ Kategori: {product.category}</p>
+              <div className="p-3">
+                <h3 className="font-bold text-base text-gray-800 mb-1" data-testid={`product-card-name-${product.id}`}>{product.name}</h3>
+                <p className="text-orange-600 font-bold text-lg mb-1">Rp {product.price.toLocaleString('id-ID')}</p>
+                <div className="space-y-0.5 text-xs text-gray-600 mb-2">
+                  <p>🏷️ {product.category}</p>
                   <p className={product.stock <= 10 ? 'text-red-600 font-semibold' : ''}>
                     📦 Stok: {product.stock}
                   </p>
-                  {product.barcode && <p>🔖 Barcode: {product.barcode}</p>}
+                  {product.barcode && <p>🔖 {product.barcode}</p>}
                 </div>
-                <div className="flex space-x-2">
+                <div className="flex space-x-1">
                   <button
                     onClick={() => handleOpenModal(product)}
                     data-testid={`edit-product-${product.id}`}
-                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-all"
+                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1.5 text-xs rounded transition-all"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(product.id)}
                     data-testid={`delete-product-${product.id}`}
-                    className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 rounded-lg transition-all"
+                    className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-1.5 text-xs rounded transition-all"
                   >
                     Hapus
                   </button>
