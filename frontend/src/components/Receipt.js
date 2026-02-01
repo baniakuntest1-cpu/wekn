@@ -141,9 +141,16 @@ const Receipt = ({ transaction, onClose, autoPrint = true }) => {
               <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed #000' }}>
                 <div style={{ fontSize: '10px', marginBottom: '4px' }}>Pembayaran:</div>
                 {transaction.payment_methods.map((pm, idx) => (
-                  <div key={idx} className="payment-row">
-                    <span style={{ textTransform: 'capitalize' }}>{pm.method}</span>
-                    <span>Rp {pm.amount.toLocaleString('id-ID')}</span>
+                  <div key={idx} style={{ marginBottom: '4px' }}>
+                    <div className="payment-row">
+                      <span style={{ textTransform: 'capitalize' }}>{pm.method}</span>
+                      <span>Rp {pm.amount.toLocaleString('id-ID')}</span>
+                    </div>
+                    {pm.reference && (
+                      <div style={{ fontSize: '9px', marginLeft: '4px', color: '#666' }}>
+                        Ref: {pm.reference}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
