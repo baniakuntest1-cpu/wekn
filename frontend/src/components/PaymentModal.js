@@ -72,11 +72,18 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
     const amount = parseFloat(inputAmount);
     if (totalPaid + amount > total + 100000) return; // Prevent excessive overpayment
     
+    const methodNames = {
+      'cash': 'Tunai',
+      'edc': 'EDC',
+      'qris': 'QRIS',
+      'tf': 'Transfer'
+    };
+    
     const payment = {
-      method: paymentType === 'cash' ? 'cash' : nonCashMethod,
-      method_name: paymentType === 'cash' ? 'Tunai' : NON_CASH_METHODS.find(m => m.id === nonCashMethod)?.name,
+      method: paymentType,
+      method_name: methodNames[paymentType],
       amount: amount,
-      reference: paymentType === 'noncash' && reference ? reference : null
+      reference: (paymentType !== 'cash' && reference) ? reference : null
     };
     
     setPayments([...payments, payment]);
