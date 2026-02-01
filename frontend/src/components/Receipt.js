@@ -23,49 +23,8 @@ const Receipt = ({ transaction, onClose, autoPrint = true }) => {
     });
   };
 
-  const printStyles = {
-    container: {
-      width: '58mm',
-      fontSize: '12px',
-      fontFamily: 'monospace',
-      padding: '5mm'
-    },
-    center: {
-      textAlign: 'center',
-      marginBottom: '10px'
-    },
-    title: {
-      fontSize: '16px',
-      fontWeight: 'bold'
-    },
-    small: {
-      fontSize: '10px'
-    },
-    divider: {
-      borderTop: '1px dashed #000',
-      paddingTop: '8px',
-      marginBottom: '8px',
-      fontSize: '10px'
-    },
-    itemRow: {
-      marginBottom: '4px'
-    },
-    flexBetween: {
-      display: 'flex',
-      justifyContent: 'space-between'
-    },
-    totalRow: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      fontWeight: 'bold',
-      fontSize: '14px',
-      marginBottom: '4px'
-    }
-  };
-
   return (
     <>
-      {/* Screen View */}
       <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 no-print" data-testid="receipt-modal">
         <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
           <div className="text-center mb-6">
@@ -130,28 +89,25 @@ const Receipt = ({ transaction, onClose, autoPrint = true }) => {
         </div>
       </div>
 
-      {/* Print View - 58mm thermal printer */}
-      <div className="print-receipt">
-        <div style={printStyles.container}>
-          <div style={printStyles.center}>
-            <div style={printStyles.title}>WEEKN</div>
-            <div style={printStyles.small}>Everyday is Weekend</div>
-            <div style={printStyles.small}>Toko Roti</div>
+      <div id="print-receipt" className="print-receipt">
+        <div className="receipt-content">
+          <div className="receipt-header">
+            <div className="receipt-title">WEEKN</div>
+            <div className="receipt-subtitle">Everyday is Weekend</div>
+            <div className="receipt-subtitle">Toko Roti</div>
           </div>
           
-          <div style={printStyles.divider}>
+          <div className="receipt-divider">
             <div>No: {transaction.id.substring(0, 8)}</div>
             <div>{formatDate(transaction.timestamp)}</div>
             <div>Kasir: {transaction.cashier_name}</div>
           </div>
 
-          <div style={{ marginBottom: '8px' }}>
+          <div className="receipt-items">
             {transaction.items.map((item, idx) => (
-              <div key={idx} style={printStyles.itemRow}>
-                <div style={printStyles.flexBetween}>
-                  <span>{item.product_name}</span>
-                </div>
-                <div style={{ ...printStyles.flexBetween, fontSize: '10px' }}>
+              <div key={idx} className="receipt-item">
+                <div className="item-name">{item.product_name}</div>
+                <div className="item-detail">
                   <span>{item.quantity} x Rp {item.price.toLocaleString('id-ID')}</span>
                   <span>Rp {item.subtotal.toLocaleString('id-ID')}</span>
                 </div>
@@ -159,25 +115,25 @@ const Receipt = ({ transaction, onClose, autoPrint = true }) => {
             ))}
           </div>
 
-          <div style={printStyles.divider}>
-            <div style={printStyles.totalRow}>
+          <div className="receipt-total">
+            <div className="total-row">
               <span>TOTAL</span>
               <span>Rp {transaction.total.toLocaleString('id-ID')}</span>
             </div>
-            <div style={{ ...printStyles.flexBetween, fontSize: '10px' }}>
+            <div className="payment-row">
               <span>Tunai</span>
               <span>Rp {transaction.cash_received.toLocaleString('id-ID')}</span>
             </div>
-            <div style={{ ...printStyles.flexBetween, fontSize: '10px', fontWeight: 'bold' }}>
+            <div className="payment-row bold">
               <span>Kembali</span>
               <span>Rp {transaction.change.toLocaleString('id-ID')}</span>
             </div>
           </div>
 
-          <div style={{ ...printStyles.center, fontSize: '10px', marginTop: '10px' }}>
+          <div className="receipt-footer">
             <div>Terima kasih atas</div>
             <div>kunjungan Anda!</div>
-            <div style={{ marginTop: '5px' }}>Selamat menikmati!</div>
+            <div>Selamat menikmati!</div>
           </div>
         </div>
       </div>
