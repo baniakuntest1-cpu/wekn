@@ -4,7 +4,7 @@ const Cart = ({ cartItems, onUpdateQuantity, onRemoveItem, onCheckout }) => {
   const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
 
   return (
-    <div className="bg-white rounded-lg shadow h-full flex flex-col p-3">
+    <div className="bg-white rounded-lg shadow h-full flex flex-col p-3 relative">
       <h2 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2" data-testid="cart-title">
         🛒 Keranjang
         {cartItems.length > 0 && (
@@ -14,7 +14,7 @@ const Cart = ({ cartItems, onUpdateQuantity, onRemoveItem, onCheckout }) => {
         )}
       </h2>
       
-      <div className="flex-1 overflow-y-auto space-y-2 mb-3" style={{ maxHeight: 'calc(100vh - 280px)' }} data-testid="cart-items">
+      <div className="flex-1 overflow-y-auto space-y-2 pb-32" style={{ maxHeight: 'calc(100vh - 340px)' }} data-testid="cart-items">
         {cartItems.length === 0 ? (
           <div className="text-center py-8 text-gray-400">
             <div className="text-4xl mb-2">🛒</div>
@@ -66,10 +66,11 @@ const Cart = ({ cartItems, onUpdateQuantity, onRemoveItem, onCheckout }) => {
         )}
       </div>
 
-      <div className="border-t-2 border-gray-200 pt-3 mt-auto">
-        <div className="flex justify-between items-center mb-3">
-          <span className="text-base font-semibold text-gray-700">TOTAL:</span>
-          <span className="text-2xl font-bold text-orange-600" data-testid="cart-total">
+      {/* Sticky Total & Button BAYAR */}
+      <div className="absolute bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 pt-4 pb-3 px-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <div className="flex justify-between items-center mb-4">
+          <span className="text-lg font-bold text-gray-700">TOTAL:</span>
+          <span className="text-3xl font-bold text-orange-600" data-testid="cart-total">
             Rp {total.toLocaleString('id-ID')}
           </span>
         </div>
@@ -78,7 +79,7 @@ const Cart = ({ cartItems, onUpdateQuantity, onRemoveItem, onCheckout }) => {
           onClick={onCheckout}
           data-testid="checkout-button"
           disabled={cartItems.length === 0}
-          className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold text-lg py-4 rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+          className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold text-xl py-5 rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
         >
           💰 BAYAR
         </button>
