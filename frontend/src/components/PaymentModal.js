@@ -282,25 +282,6 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
         {/* Payment Details */}
         {paymentType && (
           <div className="mb-4 bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
-            {/* Non-Cash Method Selection */}
-            {paymentType === 'noncash' && (
-              <div className="mb-3">
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Jenis Pembayaran:
-                </label>
-                <select
-                  value={nonCashMethod}
-                  onChange={(e) => setNonCashMethod(e.target.value)}
-                  data-testid="noncash-method-select"
-                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm bg-white"
-                >
-                  {NON_CASH_METHODS.map(method => (
-                    <option key={method.id} value={method.id}>{method.name}</option>
-                  ))}
-                </select>
-              </div>
-            )}
-
             {/* Amount Input */}
             <div className="mb-3">
               <label className="block text-sm font-semibold text-gray-700 mb-1">
@@ -327,7 +308,7 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
             </div>
 
             {/* Reference for Non-Cash */}
-            {paymentType === 'noncash' && (
+            {paymentType !== 'cash' && (
               <div className="mb-3">
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
                   📝 No. Referensi (opsional):
@@ -338,9 +319,9 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
                   onChange={(e) => setReference(e.target.value)}
                   data-testid="payment-reference-input"
                   className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none text-sm"
-                  placeholder="Contoh: QRIS-2024020112345"
+                  placeholder="Contoh: TRX-2024020112345"
                 />
-                <p className="text-xs text-gray-500 mt-1">Masukkan nomor transaksi/referensi dari aplikasi</p>
+                <p className="text-xs text-gray-500 mt-1">Masukkan nomor transaksi/referensi</p>
               </div>
             )}
 
