@@ -278,10 +278,10 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
 
         {/* Payment Details */}
         {paymentType && (
-          <div className="mb-4 bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
+          <div className="mb-3 bg-gray-50 p-3 rounded-lg border-2 border-gray-200">
             {/* Amount Input */}
-            <div className="mb-3">
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <div className="mb-2">
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
                 Jumlah:
               </label>
               <div className="flex gap-2">
@@ -290,24 +290,24 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
                   value={inputAmount}
                   onChange={(e) => setInputAmount(e.target.value)}
                   data-testid="payment-amount-input"
-                  className="flex-1 px-3 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none text-xl font-bold text-center"
+                  className="flex-1 px-2 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none text-lg font-bold text-center"
                   placeholder="0"
                   autoFocus
                 />
                 <button
                   onClick={handleUangPas}
                   data-testid="exact-amount-button"
-                  className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-4 rounded-lg text-sm"
+                  className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-3 rounded-lg text-xs"
                 >
-                  🎯 Uang Pas
+                  🎯 Pas
                 </button>
               </div>
             </div>
 
             {/* Reference for Non-Cash */}
             {paymentType !== 'cash' && (
-              <div className="mb-3">
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
+              <div className="mb-2">
+                <label className="block text-xs font-semibold text-gray-700 mb-1">
                   📝 No. Referensi (opsional):
                 </label>
                 <input
@@ -315,10 +315,9 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
                   value={reference}
                   onChange={(e) => setReference(e.target.value)}
                   data-testid="payment-reference-input"
-                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none text-sm"
-                  placeholder="Contoh: TRX-2024020112345"
+                  className="w-full px-2 py-1.5 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none text-xs"
+                  placeholder="TRX-2024020112345"
                 />
-                <p className="text-xs text-gray-500 mt-1">Masukkan nomor transaksi/referensi</p>
               </div>
             )}
 
@@ -327,7 +326,7 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
               onClick={handleAddPayment}
               data-testid="add-payment-button"
               disabled={!inputAmount || parseFloat(inputAmount) <= 0}
-              className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               ➕ Tambah Pembayaran
             </button>
