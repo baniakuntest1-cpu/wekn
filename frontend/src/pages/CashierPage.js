@@ -86,11 +86,14 @@ const CashierPage = () => {
 
   const handleConfirmPayment = async (paymentData) => {
     try {
-      const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+      const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
       
       const transactionData = {
         items: cartItems,
-        total: total,
+        subtotal: subtotal,
+        discount_amount: 0,
+        discount_type: null,
+        total: subtotal,
         ...paymentData
       };
 
