@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const MENU_ITEMS = [
   {
@@ -29,13 +29,27 @@ const MENU_ITEMS = [
     items: [
       { path: '/reports', icon: '📈', label: 'Penjualan' }
     ]
+  },
+  {
+    section: 'SYSTEM',
+    items: [
+      { path: '/users', icon: '👤', label: 'Manajemen User' }
+    ]
   }
 ];
 
 const Sidebar = ({ isCollapsed, onToggle }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
   
   const isActive = (path) => location.pathname === path;
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   return (
     <div className={`${isCollapsed ? 'w-20' : 'w-64'} bg-gray-900 text-white h-screen fixed left-0 top-0 transition-all duration-300 flex flex-col z-50`}>
@@ -89,19 +103,29 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
         ))}
       </div>
 
-      {/* User Profile */}
+      {/* User Profile & Logout */}
       <div className="border-t border-gray-800 p-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center font-bold">
-            A
+            {user.name ? user.name[0].toUpperCase() : 'U'}
           </div>
           {!isCollapsed && (
-            <div>
-              <div className="font-semibold text-sm">Admin</div>
-              <div className="text-xs text-gray-400">Owner</div>
+            <div className="flex-1 min-w-0">
+              <div className="font-semibold text-sm truncate">{user.name || 'User'}</div>
+              <div className="text-xs text-gray-400 truncate">
+                {user.role === 'super_admin' ? '👑 Super Admin' : '💰 Kasir'}
+              </div>
             </div>
           )}
         </div>
+        {!isCollapsed && (
+          <button
+            onClick={handleLogout}
+            className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"
+          >
+            🚪 Logout
+          </button>
+        )}
       </div>
     </div>
   );
