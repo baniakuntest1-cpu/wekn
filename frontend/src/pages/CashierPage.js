@@ -17,6 +17,7 @@ const CashierPage = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [completedTransaction, setCompletedTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeShift, setActiveShift] = useState(null);
   
   // Discount states
   const [showDiscountModal, setShowDiscountModal] = useState(false);
@@ -25,7 +26,17 @@ const CashierPage = () => {
 
   useEffect(() => {
     fetchProducts();
+    fetchActiveShift();
   }, []);
+
+  const fetchActiveShift = async () => {
+    try {
+      const response = await axios.get(`${API}/shifts/active`);
+      setActiveShift(response.data);
+    } catch (error) {
+      console.error('Error fetching active shift:', error);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -129,6 +140,12 @@ const CashierPage = () => {
 
   const handleConfirmPayment = async (paymentData) => {
     try {
+      // Check if shift is active
+      if (!activeShift) {
+        alert('⚠️ Tidak ada shift aktif! Buka shift terlebih dahulu di menu Shift Kasir.');
+        return;
+      }
+
       const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
       const itemsDiscountTotal = cartItems.reduce((sum, item) => sum + (item.discount_amount || 0), 0);
       const transactionDiscountAmount = transactionDiscount?.amount || 0;
@@ -140,6 +157,7 @@ const CashierPage = () => {
         discount_amount: itemsDiscountTotal + transactionDiscountAmount,
         discount_type: transactionDiscount ? transactionDiscount.type : (itemsDiscountTotal > 0 ? 'item' : null),
         total: total,
+        cashier_name: activeShift.cashier_name,
         ...paymentData
       };
 
