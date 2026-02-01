@@ -55,14 +55,24 @@ const Receipt = ({ transaction, onClose, autoPrint = true }) => {
                 <span>TOTAL</span>
                 <span>Rp {transaction.total.toLocaleString('id-ID')}</span>
               </div>
-              <div className="flex justify-between text-xs">
-                <span>Tunai</span>
-                <span>Rp {transaction.cash_received.toLocaleString('id-ID')}</span>
-              </div>
-              <div className="flex justify-between text-xs font-semibold">
-                <span>Kembali</span>
-                <span>Rp {transaction.change.toLocaleString('id-ID')}</span>
-              </div>
+              {/* Payment Methods */}
+              {transaction.payment_methods && transaction.payment_methods.length > 0 && (
+                <div className="mt-2 pt-2 border-t border-gray-200">
+                  <p className="text-xs text-gray-600 mb-1">Pembayaran:</p>
+                  {transaction.payment_methods.map((pm, idx) => (
+                    <div key={idx} className="flex justify-between text-xs">
+                      <span className="capitalize">{pm.method}</span>
+                      <span>Rp {pm.amount.toLocaleString('id-ID')}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {transaction.change > 0 && (
+                <div className="flex justify-between text-xs font-semibold mt-1">
+                  <span>Kembali</span>
+                  <span>Rp {transaction.change.toLocaleString('id-ID')}</span>
+                </div>
+              )}
             </div>
             <div className="text-center mt-4 text-xs text-gray-600">
               <p>Terima kasih atas kunjungan Anda!</p>
