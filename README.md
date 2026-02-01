@@ -1,240 +1,242 @@
-# 🍞 WEEKN POS - Sistem Point of Sale Toko Roti
+# 🍰 WEEKN - Multi-Store Bakery Management System
 
-**Everyday is Weekend** - Sistem POS modern untuk toko roti dengan UI yang mudah digunakan kasir dan support print struk thermal 58mm.
+## 📋 Overview
 
-![WEEKN Logo](frontend/public/logo-weekn.png)
+WEEKN adalah sistem manajemen toko roti komprehensif yang menangani:
+- **Multi-Store Management**: Kelola beberapa toko retail
+- **Production Management**: Manajemen produksi di pabrik central
+- **Point of Sale (POS)**: Sistem kasir lengkap dengan split payment
+- **Customer Orders**: Dua metode pemesanan (langsung dari stok atau order ke pabrik)
+- **Delivery Management**: Integrasi kurir internal & ojek online dengan kalkulasi jarak otomatis
+- **Return Management**: Sistem retur barang lengkap
+- **Inventory Tracking**: Tracking stok multi-lokasi, bahan baku, produk rusak
 
-## ✨ Fitur Phase 1 (MVP)
+## 🏗️ Tech Stack
 
-### 🎯 Fitur Inti
-- ✅ **Kasir Cepat** - Interface simpel fokus pada transaksi
-- ✅ **Manajemen Produk** - CRUD produk lengkap dengan kategori
-- ✅ **Stok Otomatis** - Update stok real-time setiap transaksi
-- ✅ **Pembayaran Cash** - Kalkulasi kembalian otomatis
-- ✅ **Struk Digital** - Print ready untuk printer thermal 58mm
-- ✅ **Laporan Harian** - Dashboard penjualan real-time
-- ✅ **Low Stock Alert** - Notifikasi produk yang perlu diisi ulang
+### Frontend
+- **Framework**: React 18
+- **Styling**: CSS, Tailwind-like utilities
+- **State Management**: React Hooks (useState, useEffect)
+- **HTTP Client**: Fetch API
+- **Build Tool**: Create React App
 
-### 🎨 UI/UX
-- **Touch-Friendly** - Tombol besar mudah di-tap
-- **Search & Filter** - Cari produk cepat by kategori
-- **Real-time Cart** - Update keranjang langsung
-- **Quick Amount Buttons** - Tombol quick input uang (50rb, 100rb, dll)
-- **Responsive Design** - Optimal di tablet & desktop
+### Backend
+- **Framework**: FastAPI (Python)
+- **Database**: MongoDB
+- **Authentication**: JWT (JSON Web Tokens)
+- **Password Hashing**: Passlib with bcrypt
 
-## 🏗️ Arsitektur Modular (Phase 2 Ready)
-
-### Backend Structure
-```
-backend/
-├── server.py          # Main FastAPI app
-├── models/            # Data models
-│   ├── product.py
-│   ├── transaction.py
-│   └── inventory.py
-├── routes/            # API endpoints (modular)
-│   ├── products.py
-│   ├── transactions.py
-│   └── reports.py
-└── .env              # Environment variables
-```
-
-### Frontend Structure
-```
-frontend/
-├── src/
-│   ├── App.js
-│   ├── pages/         # Page components
-│   │   ├── CashierPage.js
-│   │   ├── ProductsPage.js
-│   │   └── ReportsPage.js
-│   └── components/    # Reusable components
-│       ├── Navbar.js
-│       ├── ProductGrid.js
-│       ├── Cart.js
-│       ├── PaymentModal.js
-│       └── Receipt.js (58mm print)
-└── public/
-    └── logo-weekn.png
-```
-
-### Database Collections
-```javascript
-// Products
-{
-  id: "uuid",
-  name: "Roti Cokelat",
-  price: 8000,
-  category: "Roti Manis",
-  stock: 50,
-  barcode: "optional",
-  description: "optional"
-}
-
-// Transactions
-{
-  id: "uuid",
-  items: [{product_id, product_name, quantity, price, subtotal}],
-  total: 14000,
-  payment_method: "cash",
-  cash_received: 50000,
-  change: 36000,
-  timestamp: "ISO date",
-  cashier_name: "Kasir"
-}
-```
+### External Services
+- **Google Maps Distance Matrix API**: Untuk kalkulasi jarak delivery
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Backend: Python 3.8+, FastAPI, MongoDB
-- Frontend: Node.js 16+, React 19, Yarn
+- Node.js (v14+)
+- Python 3.8+
+- MongoDB
+- Yarn package manager
+
+### Environment Variables
+
+#### Backend (.env)
+```env
+MONGO_URL=mongodb://localhost:27017/
+DB_NAME=weekn_db
+JWT_SECRET=your-secret-key-here
+JWT_ALGORITHM=HS256
+GOOGLE_MAPS_API_KEY=AIzaSyCTJrRCiIGYDn2kz9ON6aL-gyf9mZr0ZEw
+```
+
+#### Frontend (.env)
+```env
+REACT_APP_BACKEND_URL=http://localhost:8001
+```
 
 ### Installation & Running
 
 ```bash
-# Backend sudah running di port 8001
-# Frontend sudah running di port 3000
-# MongoDB running di localhost:27017
+# Backend
+cd backend
+pip install -r requirements.txt
+sudo supervisorctl restart backend
 
-# Akses aplikasi
-http://localhost:3000
+# Frontend
+cd frontend
+yarn install
+sudo supervisorctl restart frontend
 ```
 
-### Setup Printer Thermal 58mm
+## 👥 Default Credentials
 
-1. **Set printer thermal sebagai default printer** di sistem
-2. **Di browser**, saat muncul dialog print, pilih printer thermal
-3. **Auto-print** sudah aktif - struk langsung print setelah pembayaran
-4. **Print ulang** tersedia di modal struk
+**Super Admin:**
+- Email: `admin@weekn.com`
+- Password: `admin123`
 
-**CSS Print Settings (sudah configured):**
-```css
-@media print {
-  @page {
-    size: 58mm auto;
-    margin: 0;
-  }
-}
-```
+## 📚 Documentation
 
-## 📱 Cara Pakai
+Dokumentasi lengkap tersedia di folder `/docs`:
 
-### 1️⃣ Halaman Kasir
-1. **Pilih produk** dari grid (klik untuk tambah ke cart)
-2. **Atur quantity** dengan tombol +/- di cart
-3. **Klik BAYAR** untuk checkout
-4. **Input uang diterima** (atau gunakan quick buttons)
-5. **Klik "Bayar & Print"** - struk langsung print!
+- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)**: Arsitektur sistem dan desain database
+- **[DEVELOPMENT_PLAN.md](./docs/DEVELOPMENT_PLAN.md)**: Rencana pengembangan fase-demi-fase
+- **[API_DOCUMENTATION.md](./docs/API_DOCUMENTATION.md)**: API endpoints dan usage
+- **[DATABASE_SCHEMA.md](./docs/DATABASE_SCHEMA.md)**: Schema database detail
+- **[WORKFLOW.md](./docs/WORKFLOW.md)**: Business workflow dan user journey
+- **[DEPLOYMENT.md](./docs/DEPLOYMENT.md)**: Panduan deployment
 
-### 2️⃣ Halaman Produk
-1. **Tambah Produk Baru** - Klik "+ Tambah Produk"
-2. **Edit Produk** - Klik tombol "Edit" di card produk
-3. **Hapus Produk** - Klik tombol "Hapus" (dengan konfirmasi)
+## 🎯 Current Status
 
-### 3️⃣ Halaman Laporan
-- **Dashboard** - Total penjualan, jumlah transaksi, rata-rata
-- **Penjualan per Produk** - Produk terlaris hari ini
-- **Stok Menipis** - Alert produk dengan stok <= 10
-- **Riwayat Transaksi** - Detail semua transaksi hari ini
+### ✅ Completed Features (Phase 0)
 
-## 🔧 API Endpoints
+- ✅ Core POS System
+  - Product grid dengan search & filter
+  - Shopping cart management
+  - Split payment (cash + digital)
+  - Transaction history
 
-### Products
-- `GET /api/products` - Get all products
-- `GET /api/products/{id}` - Get product by ID
-- `POST /api/products` - Create new product
-- `PUT /api/products/{id}` - Update product
-- `DELETE /api/products/{id}` - Delete product
-- `GET /api/products/category/{category}` - Get by category
+- ✅ Management Dashboard
+  - Product management (CRUD)
+  - Customer management (CRUD)
+  - User management dengan role-based access
+  - Reports & analytics
 
-### Transactions
-- `POST /api/transactions` - Create transaction
-- `GET /api/transactions` - Get all transactions
-- `GET /api/transactions/{id}` - Get transaction by ID
+- ✅ Shift Management
+  - Open/close shift dengan cash reconciliation
+  - Track sales per shift
+  - Shift history
 
-### Reports
-- `GET /api/reports/daily` - Daily sales report
-- `GET /api/reports/products/low-stock?threshold=10` - Low stock products
+- ✅ Discount & Promo
+  - Item-level discount
+  - Transaction-level discount
 
-## 🎯 Roadmap Phase 2
+- ✅ Authentication & Authorization
+  - JWT-based authentication
+  - Role-based access (Super Admin, Kasir)
+  - Protected routes
 
-### Payment Integration
-- [ ] **QRIS** - Integrasi pembayaran digital QRIS
-- [ ] **E-Wallet** - GoPay, OVO, Dana, ShopeePay
-- [ ] **Multi Payment** - Kombinasi cash + e-wallet
+### 🚧 In Planning (Next Phases)
 
-### Customer Management
-- [ ] **Database Pelanggan** - Simpan data pelanggan
-- [ ] **Loyalty Points** - Program poin untuk pelanggan setia
-- [ ] **Member Discount** - Diskon khusus member
+- 🔄 **Phase 1**: Multi-Store Foundation
+- 🔄 **Phase 2**: Production Management + Packing + Damaged Tracking
+- 🔄 **Phase 3**: Stock Replenishment + Packing
+- 🔄 **Phase 4A**: Struk + Delivery Integration
+- 🔄 **Phase 4B**: Customer PO + Packing
+- 🔄 **Phase 5**: Enhanced Reporting
+- 🔄 **Phase 6**: Return Management
 
-### Advanced Features
-- [ ] **Diskon & Promo** - Management diskon, bundle deals
-- [ ] **Multi Kasir & Role** - User management dengan permission
-- [ ] **Analytics Dashboard** - Grafik penjualan, trend analysis
-- [ ] **E-Faktur & Pajak** - Integrasi sistem perpajakan
-- [ ] **WhatsApp Receipt** - Kirim struk via WhatsApp
-- [ ] **Barcode Scanner** - Support scan barcode produk
+Detail lengkap di [DEVELOPMENT_PLAN.md](./docs/DEVELOPMENT_PLAN.md)
 
-### Deployment
-- [ ] **Cloud Deployment** - Deploy ke cloud (AWS/GCP)
-- [ ] **Backup Automation** - Auto backup database
-- [ ] **Multi-branch** - Support multiple toko
+## 🏢 Business Model
 
-## 🔐 Environment Variables
+### Store Structure
+- **Multiple Retail Stores**: Toko-toko retail yang melayani customer langsung
+- **Central Production Factory**: Pabrik produksi yang supply ke semua toko
 
-### Backend (.env)
-```env
-MONGO_URL=mongodb://localhost:27017
-DB_NAME=weekn_pos
-CORS_ORIGINS=*
-```
+### Transaction Types
 
-### Frontend (.env)
-```env
-REACT_APP_BACKEND_URL=https://weeknpos-1.preview.emergentagent.com
-WDS_SOCKET_PORT=443
-ENABLE_HEALTH_CHECK=false
-```
+1. **STRUK (Direct Sale)**
+   - Customer beli produk yang ada di stok toko
+   - Payment langsung (full)
+   - Optional delivery dengan kurir WEEKN atau ojek online
 
-## 🎨 Design System
+2. **PO CUSTOMER (Production Order)**
+   - Customer pesan untuk acara beberapa hari ke depan
+   - Order dikirim ke pabrik untuk produksi khusus
+   - Payment: DP atau Full
+   - Optional delivery
 
-### Colors
-- **Primary Orange**: #FFB366 (dari logo WEEKN)
-- **Secondary Teal**: #4DD0E1 (dari logo WEEKN)
-- **Success Green**: #10B981
-- **Danger Red**: #EF4444
-- **Text Dark**: #1F2937
+3. **STOCK ORDER (Store Replenishment)**
+   - Toko order stok ke pabrik untuk 2 hari ke depan
+   - Internal transfer antar lokasi
 
-### Typography
-- **Font Family**: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto'
-- **Large Buttons**: text-2xl (24px) - untuk BAYAR button
-- **Prices**: text-4xl (36px) - untuk total amount
-- **Touch Targets**: Minimum 60px height
+4. **RETURN/RETUR**
+   - Customer return produk
+   - Refund atau exchange
 
-## 🛠️ Tech Stack
+## 🔐 User Roles & Permissions
 
-### Backend
-- **FastAPI** - Modern Python web framework
-- **Motor** - Async MongoDB driver
-- **Pydantic** - Data validation
-- **UUID** - Unique IDs (tidak pakai MongoDB ObjectID)
+### Super Admin
+- Full access ke semua fitur
+- User management
+- Store management
+- Reports & analytics
 
-### Frontend
-- **React 19** - Latest React
-- **React Router** - Navigation
-- **Axios** - HTTP client
-- **Tailwind CSS** - Utility-first CSS
-- **Shadcn/ui** - Component library
+### Kasir (Cashier)
+- POS operations
+- Create customer orders
+- View reports (limited)
 
-### Database
-- **MongoDB** - NoSQL database for flexibility
+### Factory Admin (Future)
+- Production management
+- Raw materials management
+- Recipe management
+- Approve stock orders
+
+### Store Manager (Future)
+- Store-specific management
+- Stock orders
+- Local reporting
+
+## 📊 Key Metrics
+
+- **Daily Sales**: Total penjualan per hari per toko
+- **Stock Levels**: Real-time stock per produk per lokasi
+- **Production Output**: Jumlah produksi vs target
+- **Damaged Goods**: Tracking barang rusak (produksi & retur)
+- **Delivery Performance**: Kurir WEEKN vs Ojek Online
+- **Customer Returns**: Return rate & reasons
+
+## 🤝 Contributing
+
+Untuk developer yang ingin berkontribusi:
+
+1. Baca [DEVELOPMENT_PLAN.md](./docs/DEVELOPMENT_PLAN.md) untuk understand roadmap
+2. Baca [ARCHITECTURE.md](./docs/ARCHITECTURE.md) untuk understand struktur sistem
+3. Follow coding conventions yang sudah ada
+4. Test semua changes sebelum commit
+5. Update dokumentasi jika ada perubahan significant
+
+## 📝 Notes for Next Developer
+
+### Important Conventions
+
+1. **MongoDB ObjectId Handling**: Selalu exclude `_id` saat fetch data untuk avoid serialization issues
+   ```python
+   products = await db.products.find({}, {"_id": 0}).to_list(1000)
+   ```
+
+2. **API Route Prefix**: Semua backend routes HARUS pakai prefix `/api`
+   ```python
+   @router.post("/api/products")
+   ```
+
+3. **Environment Variables**: JANGAN hardcode URLs, ports, atau credentials. Selalu pakai env vars
+
+4. **DateTime**: Gunakan `datetime.now(timezone.utc)` bukan `datetime.utcnow()`
+
+5. **Store-Aware Models**: Semua model utama akan memiliki `store_id` field untuk multi-store support
+
+### Testing Strategy
+
+- Use testing subagent untuk comprehensive testing
+- Test file location: `/app/backend/tests/`
+- Maintain separate test files per feature/module
+
+### Code Structure Philosophy
+
+- **Modular**: Setiap phase independent, tidak break existing features
+- **Backward Compatible**: Data lama tetap bisa diakses
+- **Simple & Maintainable**: Avoid over-engineering
+
+## 📞 Support
+
+Untuk pertanyaan atau issue, refer ke dokumentasi di folder `/docs` atau contact team lead.
 
 ## 📄 License
 
-MIT License - WEEKN POS System
+Proprietary - WEEKN Bakery
 
 ---
 
-**Built with ❤️ for WEEKN - Everyday is Weekend** 🌊☀️
+**Last Updated**: December 2025
+**Version**: 1.0.0 (Phase 0 - MVP Complete)

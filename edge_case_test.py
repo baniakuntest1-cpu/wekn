@@ -7,7 +7,7 @@ import requests
 import json
 from datetime import datetime
 
-BACKEND_URL = "https://weeknpos-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://weekn-factory.preview.emergentagent.com/api"
 
 def test_edge_cases():
     print("🔍 Running Edge Case Tests for Shift Management")
