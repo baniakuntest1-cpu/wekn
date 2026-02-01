@@ -366,6 +366,93 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
           </button>
         </div>
       </div>
+
+      {/* Customer Selection Modal */}
+      {showCustomerModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[60] p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-gray-800">👤 Pilih/Daftar Customer</h3>
+              <button
+                onClick={() => {
+                  setShowCustomerModal(false);
+                  setNewCustomerName('');
+                  setNewCustomerPhone('');
+                  setCustomerSearchTerm('');
+                }}
+                className="text-gray-500 hover:text-gray-700 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Register New Customer Form */}
+            <div className="bg-green-50 border-2 border-green-300 rounded-lg p-4 mb-4">
+              <h4 className="font-bold text-green-800 mb-3">➕ Daftar Customer Baru</h4>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  value={newCustomerName}
+                  onChange={(e) => setNewCustomerName(e.target.value)}
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none text-sm"
+                  placeholder="Nama customer"
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="tel"
+                  value={newCustomerPhone}
+                  onChange={(e) => setNewCustomerPhone(e.target.value)}
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none text-sm"
+                  placeholder="Nomor telepon"
+                />
+              </div>
+              <button
+                onClick={handleRegisterCustomer}
+                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg"
+              >
+                ✅ Daftar & Pilih
+              </button>
+            </div>
+
+            {/* Search & Select Existing Customer */}
+            <div>
+              <h4 className="font-bold text-gray-800 mb-2">📋 Atau Pilih dari Daftar</h4>
+              <input
+                type="text"
+                value={customerSearchTerm}
+                onChange={(e) => setCustomerSearchTerm(e.target.value)}
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm mb-3"
+                placeholder="🔍 Cari nama atau nomor telepon..."
+              />
+              
+              <div className="max-h-60 overflow-y-auto space-y-2">
+                {filteredCustomers.length === 0 ? (
+                  <p className="text-center text-gray-500 py-4">Tidak ada customer</p>
+                ) : (
+                  filteredCustomers.map((customer) => (
+                    <button
+                      key={customer.id}
+                      onClick={() => {
+                        setSelectedCustomer(customer);
+                        setShowCustomerModal(false);
+                        setCustomerSearchTerm('');
+                      }}
+                      className="w-full bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-lg p-3 text-left transition-all"
+                    >
+                      <p className="font-semibold text-blue-900">{customer.name}</p>
+                      <p className="text-sm text-blue-700">{customer.phone}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {customer.total_transactions || 0}x transaksi • Rp {(customer.total_spent || 0).toLocaleString('id-ID')}
+                      </p>
+                    </button>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
