@@ -14,7 +14,7 @@ const Cart = ({ cartItems, onUpdateQuantity, onRemoveItem, onCheckout }) => {
         )}
       </h2>
       
-      <div className="flex-1 overflow-y-auto space-y-2 pb-2" style={{ maxHeight: 'calc(100vh - 340px)' }} data-testid="cart-items">
+      <div className="flex-1 overflow-y-auto space-y-2 pb-2" style={{ maxHeight: 'calc(100vh - 200px)' }} data-testid="cart-items">
         {cartItems.length === 0 ? (
           <div className="text-center py-8 text-gray-400">
             <div className="text-4xl mb-2">🛒</div>
