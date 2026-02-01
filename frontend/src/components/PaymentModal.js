@@ -476,6 +476,7 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
                         setShowCustomerModal(false);
                         setCustomerSearchTerm('');
                       }}
+                      data-testid={`customer-option-${customer.id}`}
                       className="w-full bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-lg p-3 text-left transition-all"
                     >
                       <p className="font-semibold text-blue-900">{customer.name}</p>
