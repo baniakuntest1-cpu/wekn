@@ -150,6 +150,20 @@ const Receipt = ({ transaction, onClose, autoPrint = true }) => {
           </div>
 
           <div className="receipt-total">
+            {transaction.discount_amount > 0 && (
+              <div className="payment-row" style={{ marginBottom: '4px' }}>
+                <span>Subtotal</span>
+                <span>Rp {(transaction.subtotal || transaction.total).toLocaleString('id-ID')}</span>
+              </div>
+            )}
+            
+            {transaction.discount_amount > 0 && (
+              <div className="payment-row" style={{ marginBottom: '4px', color: '#059669' }}>
+                <span>Diskon</span>
+                <span>- Rp {transaction.discount_amount.toLocaleString('id-ID')}</span>
+              </div>
+            )}
+            
             <div className="total-row">
               <span>TOTAL</span>
               <span>Rp {transaction.total.toLocaleString('id-ID')}</span>
