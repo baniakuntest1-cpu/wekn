@@ -19,7 +19,8 @@ const MENU_ITEMS = [
   {
     section: 'CUSTOMER',
     items: [
-      { path: '/pelanggan', icon: '👥', label: 'Pelanggan' }
+      { path: '/pelanggan', icon: '👥', label: 'Pelanggan' },
+      { path: '/loyalty', icon: '🎁', label: 'Program Loyalty' }
     ]
   },
   {
