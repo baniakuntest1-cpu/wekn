@@ -168,51 +168,63 @@ frontend:
 
   - task: "Item Discount - Percentage & Nominal"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/DiscountModal.js, /app/frontend/src/components/Cart.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "DiscountModal component implemented with percentage and nominal discount types. Cart component shows discount buttons and displays applied discounts. Need comprehensive testing of discount calculations and UI interactions."
+        - working: true
+          agent: "testing"
+          comment: "✅ ITEM DISCOUNT TESTING COMPLETED - Both percentage and nominal discounts working perfectly! Tested: 1) 20% discount on Croissant (Rp 12,000) = -Rp 2,400 ✅, 2) Rp 5,000 nominal discount on Brownies (Rp 25,000) ✅, 3) Discount modal opens correctly with proper UI, 4) Discount preview calculations accurate, 5) Applied discounts display correctly in cart with green background, 6) 'Ubah Diskon' button functionality works for modifying existing discounts, 7) Quick discount buttons (10%, 20%, 30%, 50%) functional. All discount types and UI interactions verified."
 
   - task: "Transaction Discount"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/pages/CashierPage.js, /app/frontend/src/components/Cart.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Transaction-level discount functionality implemented. 'Tambah Diskon Transaksi' button in cart applies discount to entire transaction. Need testing of calculation logic and UI flow."
+        - working: true
+          agent: "testing"
+          comment: "✅ TRANSACTION DISCOUNT TESTING COMPLETED - Transaction-level discounts working perfectly! Tested: 1) 'Tambah Diskon Transaksi' button appears when items in cart ✅, 2) 10% transaction discount applied correctly ✅, 3) Transaction discount calculated on subtotal after item discounts (Rp 29,600 base * 10% = Rp 2,960) ✅, 4) Transaction discount displays separately in cart summary ✅, 5) 'Ubah Diskon Transaksi' button works for modifications ✅. All transaction discount functionality verified."
 
   - task: "Discount Calculation & Integration"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/pages/CashierPage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Complete discount integration in cashier flow. Supports both item-level and transaction-level discounts. Final total calculation includes all discount types. Need testing of complete checkout flow with discounts."
+        - working: true
+          agent: "testing"
+          comment: "✅ DISCOUNT CALCULATION & INTEGRATION TESTING COMPLETED - All calculations working perfectly! Verified: 1) Subtotal: Rp 37,000 (Croissant 12k + Brownies 25k) ✅, 2) Item Discounts: -Rp 7,400 (20% of 12k = 2,400 + 5k nominal = 7,400) ✅, 3) Transaction Discount: -Rp 2,960 (10% of remaining 29,600) ✅, 4) Final Total: Rp 26,640 ✅, 5) Payment modal shows correct total ✅, 6) Complete checkout flow with discounts successful ✅, 7) Cart clears after successful transaction ✅. All discount integration and calculations verified."
 
   - task: "Discount Edge Cases & Validation"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/DiscountModal.js"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Discount validation implemented: prevents >100% discounts, caps nominal discounts at item price. Need testing of edge cases and error handling."
+        - working: true
+          agent: "testing"
+          comment: "✅ EDGE CASES & VALIDATION TESTING COMPLETED - All validation working correctly! Tested: 1) Discount >100% validation - shows 'Diskon maksimal 100%!' alert ✅, 2) Nominal discount > item price validation - shows 'Diskon tidak boleh lebih dari harga!' alert ✅, 3) Discount amount automatically capped at item price when exceeded ✅, 4) Input validation prevents negative values ✅, 5) Modal cancel functionality works ✅, 6) Item removal with applied discounts works correctly ✅. All edge cases and validation rules verified."
 
 metadata:
   created_by: "main_agent"
