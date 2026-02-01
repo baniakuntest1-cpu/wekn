@@ -130,13 +130,16 @@ const CashierPage = () => {
   const handleConfirmPayment = async (paymentData) => {
     try {
       const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+      const itemsDiscountTotal = cartItems.reduce((sum, item) => sum + (item.discount_amount || 0), 0);
+      const transactionDiscountAmount = transactionDiscount?.amount || 0;
+      const total = subtotal - itemsDiscountTotal - transactionDiscountAmount;
       
       const transactionData = {
         items: cartItems,
         subtotal: subtotal,
-        discount_amount: 0,
-        discount_type: null,
-        total: subtotal,
+        discount_amount: itemsDiscountTotal + transactionDiscountAmount,
+        discount_type: transactionDiscount ? transactionDiscount.type : (itemsDiscountTotal > 0 ? 'item' : null),
+        total: total,
         ...paymentData
       };
 
@@ -145,6 +148,7 @@ const CashierPage = () => {
       setCompletedTransaction(response.data);
       setShowPaymentModal(false);
       setCartItems([]);
+      setTransactionDiscount(null);
       
       // Refresh products to update stock
       fetchProducts();
