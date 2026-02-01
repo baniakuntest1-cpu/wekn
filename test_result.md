@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Build a POS system for WEEKN bakery with Phase 2.4 - Shift Management feature: Opening and closing shifts for cashiers with cash reconciliation. Now testing Phase 2.2 - Diskon & Promo feature for comprehensive discount functionality."
+user_problem_statement: "Build a POS system for WEEKN bakery with Phase 2.4 - Shift Management feature: Opening and closing shifts for cashiers with cash reconciliation. Now testing Phase 2.3 - Customer Integration into Transaction feature for comprehensive customer management functionality."
 
 backend:
   - task: "Shift Management API"
