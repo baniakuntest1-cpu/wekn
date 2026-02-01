@@ -17,11 +17,12 @@ class TransactionItem(BaseModel):
 class Transaction(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     items: List[TransactionItem]
-    subtotal: float  # Before discount
+    subtotal: Optional[float] = None  # Optional for backward compatibility
     discount_amount: float = 0.0
     discount_type: Optional[str] = None  # percentage, nominal, none
     total: float  # After discount
-    payment_methods: List[PaymentMethod]  # Support split payment
+    payment_methods: Optional[List[PaymentMethod]] = None  # Support split payment, optional for old data
+    payment_method: Optional[str] = None  # Old field for backward compatibility
     cash_received: Optional[float] = None  # For backward compatibility
     change: Optional[float] = None
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
