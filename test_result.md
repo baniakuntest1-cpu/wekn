@@ -222,10 +222,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Shift Management API"
-    - "Shift Page UI"
-    - "Shift Modal Component"
-    - "Active Shift Integration in Cashier Page"
+    - "Item Discount - Percentage & Nominal"
+    - "Transaction Discount"
+    - "Discount Calculation & Integration"
+    - "Discount Edge Cases & Validation"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
