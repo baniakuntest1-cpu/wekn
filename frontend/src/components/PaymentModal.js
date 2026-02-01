@@ -190,6 +190,7 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => setShowCustomerModal(true)}
+                data-testid="select-customer-button"
                 className="bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-2 px-3 rounded-lg text-sm"
               >
                 📋 Pilih Customer
@@ -199,6 +200,7 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
                   setShowCustomerModal(true);
                   setCustomerSearchTerm('');
                 }}
+                data-testid="register-new-customer-button"
                 className="bg-green-100 hover:bg-green-200 text-green-800 font-semibold py-2 px-3 rounded-lg text-sm"
               >
                 ➕ Daftar Baru
