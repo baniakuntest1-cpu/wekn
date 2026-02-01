@@ -137,6 +137,45 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
           </p>
         </div>
 
+        {/* Customer Selection */}
+        <div className="mb-4">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            👤 Customer (Opsional):
+          </label>
+          {selectedCustomer ? (
+            <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-3 flex justify-between items-center">
+              <div>
+                <p className="font-semibold text-blue-900">{selectedCustomer.name}</p>
+                <p className="text-sm text-blue-700">{selectedCustomer.phone}</p>
+              </div>
+              <button
+                onClick={() => setSelectedCustomer(null)}
+                className="text-red-500 hover:text-red-700 font-bold text-lg"
+              >
+                ✕
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setShowCustomerModal(true)}
+                className="bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-2 px-3 rounded-lg text-sm"
+              >
+                📋 Pilih Customer
+              </button>
+              <button
+                onClick={() => {
+                  setShowCustomerModal(true);
+                  setCustomerSearchTerm('');
+                }}
+                className="bg-green-100 hover:bg-green-200 text-green-800 font-semibold py-2 px-3 rounded-lg text-sm"
+              >
+                ➕ Daftar Baru
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Kasir Name */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-700 mb-1">
