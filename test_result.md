@@ -111,11 +111,14 @@ backend:
     file: "/app/backend/routes/shifts.py, /app/backend/models/shift.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: true
           agent: "main"
           comment: "Implemented shift API with open/close/active endpoints. Backend tested via curl successfully. Fixed timezone import issue."
+        - working: true
+          agent: "testing"
+          comment: "COMPREHENSIVE BACKEND TESTING COMPLETED ✅ All 10 core tests + 5 edge cases passed (100% success rate). Tested: 1) Open shift with validation, 2) Duplicate shift prevention, 3) Active shift retrieval, 4) Transaction creation with cash/split/non-cash payments, 5) Shift closing with correct cash reconciliation (opening_cash + cash_payments = 580k expected), 6) Duplicate close prevention, 7) Shift history sorting, 8) No active shift after close, 9) Error handling for invalid IDs, 10) Negative cash handling. Cash calculation verified: 500k opening + 50k cash + 30k cash from split = 580k (NOT including 100k GoPay). All API endpoints working correctly with proper error messages and status codes."
 
 frontend:
   - task: "Shift Page UI"
