@@ -166,6 +166,54 @@ frontend:
           agent: "testing"
           comment: "✅ ACTIVE SHIFT INTEGRATION TESTING COMPLETED - Cashier page integration working perfectly! Tested: 1) Green banner shows 'Shift Aktif: [Cashier Name]' and 'Modal Awal: Rp [Amount]' when shift is active, 2) Yellow warning banner shows 'Tidak ada shift aktif!' when no shift is active with link to open shift, 3) Product selection and cart functionality works with active shift, 4) Transaction creation requires active shift and includes cashier name from active shift, 5) Payment modal opens and processes cash payments correctly. All shift-related UI states and transaction flow verified."
 
+  - task: "Item Discount - Percentage & Nominal"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/DiscountModal.js, /app/frontend/src/components/Cart.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "DiscountModal component implemented with percentage and nominal discount types. Cart component shows discount buttons and displays applied discounts. Need comprehensive testing of discount calculations and UI interactions."
+
+  - task: "Transaction Discount"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/CashierPage.js, /app/frontend/src/components/Cart.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Transaction-level discount functionality implemented. 'Tambah Diskon Transaksi' button in cart applies discount to entire transaction. Need testing of calculation logic and UI flow."
+
+  - task: "Discount Calculation & Integration"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/CashierPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Complete discount integration in cashier flow. Supports both item-level and transaction-level discounts. Final total calculation includes all discount types. Need testing of complete checkout flow with discounts."
+
+  - task: "Discount Edge Cases & Validation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/DiscountModal.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Discount validation implemented: prevents >100% discounts, caps nominal discounts at item price. Need testing of edge cases and error handling."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
