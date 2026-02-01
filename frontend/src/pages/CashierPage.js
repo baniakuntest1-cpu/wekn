@@ -220,6 +220,9 @@ const CashierPage = () => {
             onUpdateQuantity={handleUpdateQuantity}
             onRemoveItem={handleRemoveItem}
             onCheckout={handleCheckout}
+            onApplyItemDiscount={handleApplyItemDiscount}
+            onApplyTransactionDiscount={handleApplyTransactionDiscount}
+            transactionDiscount={transactionDiscount}
           />
         </div>
       </div>
@@ -228,8 +231,20 @@ const CashierPage = () => {
       <PaymentModal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
-        total={cartItems.reduce((sum, item) => sum + item.subtotal, 0)}
+        total={cartItems.reduce((sum, item) => sum + item.subtotal, 0) - cartItems.reduce((sum, item) => sum + (item.discount_amount || 0), 0) - (transactionDiscount?.amount || 0)}
         onConfirmPayment={handleConfirmPayment}
+      />
+
+      {/* Discount Modal */}
+      <DiscountModal
+        isOpen={showDiscountModal}
+        onClose={() => {
+          setShowDiscountModal(false);
+          setDiscountTarget(null);
+        }}
+        onApply={handleDiscountApply}
+        itemName={discountTarget?.type === 'transaction' ? 'Total Transaksi' : discountTarget?.product_name}
+        originalPrice={discountTarget?.type === 'transaction' ? discountTarget.amount : discountTarget?.subtotal || 0}
       />
 
       {/* Receipt */}
