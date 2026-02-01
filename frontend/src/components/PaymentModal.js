@@ -15,10 +15,10 @@ const NON_CASH_METHODS = [
 const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
   const [cashierName, setCashierName] = useState('Kasir');
   const [payments, setPayments] = useState([]);
-  const [paymentType, setPaymentType] = useState(null); // 'cash' or 'noncash'
-  const [nonCashMethod, setNonCashMethod] = useState('qris');
+  const [paymentType, setPaymentType] = useState(null); // 'cash', 'edc', 'qris', 'tf'
   const [inputAmount, setInputAmount] = useState('');
   const [reference, setReference] = useState('');
+  const [showConfirmation, setShowConfirmation] = useState(false);
   
   // Customer states
   const [customers, setCustomers] = useState([]);
