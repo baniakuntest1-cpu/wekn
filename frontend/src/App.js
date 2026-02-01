@@ -9,62 +9,103 @@ import ProductsPage from "./pages/ProductsPage";
 import ReportsPage from "./pages/ReportsPage";
 import CustomersPage from "./pages/CustomersPage";
 import ShiftPage from "./pages/ShiftPage";
+import LoginPage from "./pages/LoginPage";
+import UsersPage from "./pages/UsersPage";
+
+// Protected Route Component
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/kasir" replace />;
+  }
+
+  return children;
+};
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          {/* Kasir - Fullscreen Mode (with Navbar) */}
+          {/* Login Page */}
+          <Route path="/login" element={<LoginPage />} />
+
+          {/* Kasir - Fullscreen Mode (with Navbar) - All roles */}
           <Route
             path="/kasir"
             element={
-              <>
+              <ProtectedRoute>
                 <Navbar />
                 <CashierPage />
-              </>
+              </ProtectedRoute>
             }
           />
 
-          {/* Management Pages - Sidebar Layout */}
+          {/* Management Pages - Sidebar Layout - Super Admin Only */}
           <Route
             path="/"
             element={
-              <SidebarLayout>
-                <Dashboard />
-              </SidebarLayout>
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <SidebarLayout>
+                  <Dashboard />
+                </SidebarLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/products"
             element={
-              <SidebarLayout>
-                <ProductsPage />
-              </SidebarLayout>
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <SidebarLayout>
+                  <ProductsPage />
+                </SidebarLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/reports"
             element={
-              <SidebarLayout>
-                <ReportsPage />
-              </SidebarLayout>
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <SidebarLayout>
+                  <ReportsPage />
+                </SidebarLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/pelanggan"
             element={
-              <SidebarLayout>
-                <CustomersPage />
-              </SidebarLayout>
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <SidebarLayout>
+                  <CustomersPage />
+                </SidebarLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/shifts"
             element={
-              <SidebarLayout>
-                <ShiftPage />
-              </SidebarLayout>
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <SidebarLayout>
+                  <ShiftPage />
+                </SidebarLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <SidebarLayout>
+                  <UsersPage />
+                </SidebarLayout>
+              </ProtectedRoute>
             }
           />
 
