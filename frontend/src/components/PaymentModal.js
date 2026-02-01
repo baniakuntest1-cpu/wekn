@@ -4,14 +4,6 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const NON_CASH_METHODS = [
-  { id: 'qris', name: 'QRIS' },
-  { id: 'gopay', name: 'GoPay' },
-  { id: 'ovo', name: 'OVO' },
-  { id: 'dana', name: 'Dana' },
-  { id: 'shopeepay', name: 'ShopeePay' }
-];
-
 const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
   const [cashierName, setCashierName] = useState('Kasir');
   const [payments, setPayments] = useState([]);
