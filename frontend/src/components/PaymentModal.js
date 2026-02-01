@@ -1,48 +1,65 @@
 import React, { useState } from 'react';
 
-const PAYMENT_METHODS = [
-  { id: 'cash', name: 'Cash', icon: '💵', color: 'bg-green-100 hover:bg-green-200 text-green-800' },
-  { id: 'qris', name: 'QRIS', icon: '📱', color: 'bg-blue-100 hover:bg-blue-200 text-blue-800' },
-  { id: 'gopay', name: 'GoPay', icon: '🟢', color: 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800' },
-  { id: 'ovo', name: 'OVO', icon: '🔵', color: 'bg-purple-100 hover:bg-purple-200 text-purple-800' },
-  { id: 'dana', name: 'Dana', icon: '🟡', color: 'bg-cyan-100 hover:bg-cyan-200 text-cyan-800' },
-  { id: 'shopeepay', name: 'ShopeePay', icon: '🟠', color: 'bg-orange-100 hover:bg-orange-200 text-orange-800' }
+const NON_CASH_METHODS = [
+  { id: 'qris', name: 'QRIS' },
+  { id: 'gopay', name: 'GoPay' },
+  { id: 'ovo', name: 'OVO' },
+  { id: 'dana', name: 'Dana' },
+  { id: 'shopeepay', name: 'ShopeePay' }
 ];
 
 const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
   const [cashierName, setCashierName] = useState('Kasir');
   const [payments, setPayments] = useState([]);
-  const [selectedMethod, setSelectedMethod] = useState(null);
+  const [paymentType, setPaymentType] = useState(null); // 'cash' or 'noncash'
+  const [nonCashMethod, setNonCashMethod] = useState('qris');
   const [inputAmount, setInputAmount] = useState('');
+  const [reference, setReference] = useState('');
 
   const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
   const remaining = total - totalPaid;
   const change = totalPaid > total ? totalPaid - total : 0;
 
+  const handleSelectPaymentType = (type) => {
+    setPaymentType(type);
+    // Auto-fill remaining amount
+    if (remaining > 0) {
+      setInputAmount(remaining.toString());
+    } else {
+      setInputAmount(total.toString());
+    }
+    setReference('');
+  };
+
+  const handleUangPas = () => {
+    if (remaining > 0) {
+      setInputAmount(remaining.toString());
+    } else {
+      setInputAmount(total.toString());
+    }
+  };
+
   const handleAddPayment = () => {
-    if (!selectedMethod || !inputAmount || parseFloat(inputAmount) <= 0) return;
+    if (!paymentType || !inputAmount || parseFloat(inputAmount) <= 0) return;
     
     const amount = parseFloat(inputAmount);
     if (totalPaid + amount > total + 100000) return; // Prevent excessive overpayment
     
-    setPayments([...payments, {
-      method: selectedMethod.id,
-      method_name: selectedMethod.name,
-      amount: amount
-    }]);
+    const payment = {
+      method: paymentType === 'cash' ? 'cash' : nonCashMethod,
+      method_name: paymentType === 'cash' ? 'Tunai' : NON_CASH_METHODS.find(m => m.id === nonCashMethod)?.name,
+      amount: amount,
+      reference: paymentType === 'noncash' && reference ? reference : null
+    };
     
+    setPayments([...payments, payment]);
     setInputAmount('');
-    setSelectedMethod(null);
+    setReference('');
+    setPaymentType(null);
   };
 
   const handleRemovePayment = (index) => {
     setPayments(payments.filter((_, i) => i !== index));
-  };
-
-  const handleQuickAmount = (amount) => {
-    if (remaining > 0) {
-      setInputAmount(Math.min(amount, remaining + 50000).toString());
-    }
   };
 
   const handleConfirm = () => {
@@ -53,7 +70,8 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
 
     const paymentMethods = payments.map(p => ({
       method: p.method,
-      amount: p.amount
+      amount: p.amount,
+      reference: p.reference
     }));
 
     // For backward compatibility with cash
@@ -69,16 +87,15 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
     // Reset
     setPayments([]);
     setInputAmount('');
-    setSelectedMethod(null);
+    setReference('');
+    setPaymentType(null);
   };
-
-  const quickAmounts = [20000, 50000, 100000, 150000, 200000];
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" data-testid="payment-modal">
-      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
         <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center" data-testid="payment-modal-title">
           💳 Pembayaran
         </h2>
@@ -106,104 +123,154 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
           />
         </div>
 
-        {/* Payment Methods Selection */}
+        {/* Payment Type Selection */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-700 mb-2">
             Pilih Metode Pembayaran:
           </label>
-          <div className="grid grid-cols-3 gap-2">
-            {PAYMENT_METHODS.map((method) => (
-              <button
-                key={method.id}
-                onClick={() => setSelectedMethod(method)}
-                className={`${method.color} ${selectedMethod?.id === method.id ? 'ring-2 ring-orange-500' : ''} font-semibold py-3 text-sm rounded-lg transition-all flex items-center justify-center gap-1`}
-                data-testid={`payment-method-${method.id}`}
-              >
-                <span>{method.icon}</span>
-                <span>{method.name}</span>
-              </button>
-            ))}
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => handleSelectPaymentType('cash')}
+              className={`${paymentType === 'cash' ? 'bg-green-500 text-white ring-2 ring-green-600' : 'bg-green-100 text-green-800 hover:bg-green-200'} font-bold py-4 text-lg rounded-lg transition-all flex items-center justify-center gap-2`}
+              data-testid="payment-type-cash"
+            >
+              <span>💵</span>
+              <span>TUNAI</span>
+            </button>
+            <button
+              onClick={() => handleSelectPaymentType('noncash')}
+              className={`${paymentType === 'noncash' ? 'bg-blue-500 text-white ring-2 ring-blue-600' : 'bg-blue-100 text-blue-800 hover:bg-blue-200'} font-bold py-4 text-lg rounded-lg transition-all flex items-center justify-center gap-2`}
+              data-testid="payment-type-noncash"
+            >
+              <span>📱</span>
+              <span>NON-TUNAI</span>
+            </button>
           </div>
         </div>
 
-        {/* Amount Input */}
-        {selectedMethod && (
-          <div className="mb-4 bg-gray-50 p-4 rounded-lg">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Jumlah {selectedMethod.name}:
-            </label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="number"
-                value={inputAmount}
-                onChange={(e) => setInputAmount(e.target.value)}
-                data-testid="payment-amount-input"
-                className="flex-1 px-3 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none text-xl font-bold text-center"
-                placeholder="0"
-                autoFocus
-              />
-              <button
-                onClick={handleAddPayment}
-                data-testid="add-payment-button"
-                disabled={!inputAmount || parseFloat(inputAmount) <= 0}
-                className="bg-green-500 hover:bg-green-600 text-white font-bold px-6 rounded-lg disabled:opacity-50"
-              >
-                Tambah
-              </button>
-            </div>
-            
-            {/* Quick Amount Buttons */}
-            <div className="grid grid-cols-5 gap-2">
-              {quickAmounts.map((amount) => (
-                <button
-                  key={amount}
-                  onClick={() => handleQuickAmount(amount)}
-                  className="bg-teal-100 hover:bg-teal-200 text-teal-800 font-semibold py-2 text-xs rounded-lg"
+        {/* Payment Details */}
+        {paymentType && (
+          <div className="mb-4 bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
+            {/* Non-Cash Method Selection */}
+            {paymentType === 'noncash' && (
+              <div className="mb-3">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Jenis Pembayaran:
+                </label>
+                <select
+                  value={nonCashMethod}
+                  onChange={(e) => setNonCashMethod(e.target.value)}
+                  data-testid="noncash-method-select"
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm bg-white"
                 >
-                  {amount >= 1000000 ? `${amount / 1000000}jt` : `${amount / 1000}rb`}
+                  {NON_CASH_METHODS.map(method => (
+                    <option key={method.id} value={method.id}>{method.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Amount Input */}
+            <div className="mb-3">
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Jumlah:
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={inputAmount}
+                  onChange={(e) => setInputAmount(e.target.value)}
+                  data-testid="payment-amount-input"
+                  className="flex-1 px-3 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none text-xl font-bold text-center"
+                  placeholder="0"
+                  autoFocus
+                />
+                <button
+                  onClick={handleUangPas}
+                  data-testid="exact-amount-button"
+                  className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-4 rounded-lg text-sm"
+                >
+                  🎯 Uang Pas
                 </button>
-              ))}
+              </div>
             </div>
+
+            {/* Reference for Non-Cash */}
+            {paymentType === 'noncash' && (
+              <div className="mb-3">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  📝 No. Referensi (opsional):
+                </label>
+                <input
+                  type="text"
+                  value={reference}
+                  onChange={(e) => setReference(e.target.value)}
+                  data-testid="payment-reference-input"
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none text-sm"
+                  placeholder="Contoh: QRIS-2024020112345"
+                />
+                <p className="text-xs text-gray-500 mt-1">Masukkan nomor transaksi/referensi dari aplikasi</p>
+              </div>
+            )}
+
+            {/* Add Button */}
+            <button
+              onClick={handleAddPayment}
+              data-testid="add-payment-button"
+              disabled={!inputAmount || parseFloat(inputAmount) <= 0}
+              className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              ➕ Tambah Pembayaran
+            </button>
           </div>
         )}
 
         {/* Payment List */}
         {payments.length > 0 && (
-          <div className="mb-4 bg-blue-50 rounded-lg p-4">
+          <div className="mb-4 bg-blue-50 rounded-lg p-4 border-2 border-blue-200">
             <h3 className="font-semibold text-gray-800 mb-2 text-sm">Pembayaran:</h3>
             <div className="space-y-2">
               {payments.map((payment, index) => (
-                <div key={index} className="flex justify-between items-center bg-white rounded p-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm">{payment.method_name}</span>
-                    <span className="text-orange-600 font-bold text-sm">
-                      Rp {payment.amount.toLocaleString('id-ID')}
-                    </span>
+                <div key={index} className="bg-white rounded p-3 border border-blue-200">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-bold text-sm">{payment.method_name}</span>
+                        <button
+                          onClick={() => handleRemovePayment(index)}
+                          className="text-red-500 hover:text-red-700 font-bold text-xl leading-none"
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <div className="text-orange-600 font-bold">
+                        Rp {payment.amount.toLocaleString('id-ID')}
+                      </div>
+                      {payment.reference && (
+                        <div className="text-xs text-gray-600 mt-1">
+                          Ref: {payment.reference}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <button
-                    onClick={() => handleRemovePayment(index)}
-                    className="text-red-500 hover:text-red-700 font-bold"
-                  >
-                    ×
-                  </button>
                 </div>
               ))}
             </div>
-            <div className="mt-3 pt-3 border-t border-blue-200">
+            <div className="mt-3 pt-3 border-t border-blue-300">
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-600">Total Dibayar:</span>
+                <span className="text-gray-700 font-semibold">Total Dibayar:</span>
                 <span className="font-bold">Rp {totalPaid.toLocaleString('id-ID')}</span>
               </div>
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-600">Sisa:</span>
+                <span className="text-gray-700 font-semibold">Sisa:</span>
                 <span className={`font-bold ${remaining > 0 ? 'text-red-600' : 'text-green-600'}`}>
                   Rp {Math.abs(remaining).toLocaleString('id-ID')}
                 </span>
               </div>
               {change > 0 && (
-                <div className="flex justify-between">
-                  <span className="text-green-700 font-semibold">Kembalian:</span>
-                  <span className="text-green-600 font-bold text-lg">
+                <div className="flex justify-between mt-2 pt-2 border-t border-blue-200">
+                  <span className="text-green-700 font-bold">Kembalian:</span>
+                  <span className="text-green-600 font-bold text-xl">
                     Rp {change.toLocaleString('id-ID')}
                   </span>
                 </div>
