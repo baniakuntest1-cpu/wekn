@@ -335,52 +335,36 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
 
         {/* Payment List */}
         {payments.length > 0 && (
-          <div className="mb-4 bg-blue-50 rounded-lg p-4 border-2 border-blue-200">
-            <h3 className="font-semibold text-gray-800 mb-2 text-sm">Pembayaran:</h3>
-            <div className="space-y-2">
-              {payments.map((payment, index) => (
-                <div key={index} className="bg-white rounded p-3 border border-blue-200">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-sm">{payment.method_name}</span>
-                        <button
-                          onClick={() => handleRemovePayment(index)}
-                          className="text-red-500 hover:text-red-700 font-bold text-xl leading-none"
-                        >
-                          ×
-                        </button>
-                      </div>
-                      <div className="text-orange-600 font-bold">
-                        Rp {payment.amount.toLocaleString('id-ID')}
-                      </div>
-                      {payment.reference && (
-                        <div className="text-xs text-gray-600 mt-1">
-                          Ref: {payment.reference}
-                        </div>
-                      )}
-                    </div>
-                  </div>
+          <div className="mb-3 bg-green-50 rounded-lg p-3 border-2 border-green-200">
+            <p className="text-xs font-semibold text-gray-700 mb-2">💰 Pembayaran:</p>
+            {payments.map((payment, index) => (
+              <div key={index} className="flex justify-between items-center bg-white rounded p-2 mb-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold">{payment.method_name}</span>
+                  {payment.reference && (
+                    <span className="text-xs text-gray-500">({payment.reference})</span>
+                  )}
                 </div>
-              ))}
-            </div>
-            <div className="mt-3 pt-3 border-t border-blue-300">
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-700 font-semibold">Total Dibayar:</span>
-                <span className="font-bold">Rp {totalPaid.toLocaleString('id-ID')}</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-sm">Rp {payment.amount.toLocaleString('id-ID')}</span>
+                  <button
+                    onClick={() => handleRemovePayment(index)}
+                    className="text-red-500 hover:text-red-700 text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-700 font-semibold">Sisa:</span>
-                <span className={`font-bold ${remaining > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                  Rp {Math.abs(remaining).toLocaleString('id-ID')}
-                </span>
+            ))}
+            <div className="border-t-2 border-green-300 mt-2 pt-2">
+              <div className="flex justify-between text-sm">
+                <span className="font-semibold">Total Dibayar:</span>
+                <span className="font-bold text-green-700">Rp {totalPaid.toLocaleString('id-ID')}</span>
               </div>
               {change > 0 && (
-                <div className="flex justify-between mt-2 pt-2 border-t border-blue-200">
-                  <span className="text-green-700 font-bold">Kembalian:</span>
-                  <span className="text-green-600 font-bold text-xl">
-                    Rp {change.toLocaleString('id-ID')}
-                  </span>
+                <div className="flex justify-between text-sm mt-1">
+                  <span className="font-semibold text-orange-700">Kembalian:</span>
+                  <span className="font-bold text-orange-700">Rp {change.toLocaleString('id-ID')}</span>
                 </div>
               )}
             </div>
