@@ -179,20 +179,20 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
           </div>
 
         {/* Customer Selection */}
-        <div className="mb-4">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            👤 Customer (Opsional):
+        <div className="mb-3">
+          <label className="block text-xs font-semibold text-gray-700 mb-1">
+            👤 Customer (opsional):
           </label>
           {selectedCustomer ? (
-            <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-3 flex justify-between items-center">
+            <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-2 flex justify-between items-center">
               <div>
-                <p className="font-semibold text-blue-900">{selectedCustomer.name}</p>
-                <p className="text-sm text-blue-700">{selectedCustomer.phone}</p>
+                <p className="font-semibold text-sm text-blue-900">{selectedCustomer.name}</p>
+                <p className="text-xs text-blue-700">{selectedCustomer.phone}</p>
               </div>
               <button
                 onClick={() => setSelectedCustomer(null)}
                 data-testid="remove-customer-button"
-                className="text-red-500 hover:text-red-700 font-bold text-lg"
+                className="text-red-500 hover:text-red-700 font-bold text-xs"
               >
                 ✕
               </button>
