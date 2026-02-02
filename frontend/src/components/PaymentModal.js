@@ -375,12 +375,12 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
         </div>
         
         {/* Sticky Footer */}
-        <div className="border-t bg-white p-4">
+        <div className="border-t bg-white p-3">
           <div className="flex space-x-2">
             <button
               onClick={onClose}
               data-testid="payment-cancel-button"
-              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg transition-all text-sm"
+              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 rounded-lg transition-all text-xs"
             >
               Batal
             </button>
@@ -388,7 +388,7 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
               onClick={handleConfirm}
               data-testid="payment-confirm-button"
               disabled={totalPaid < total}
-              className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-xs"
             >
               {totalPaid >= total ? '✅ Konfirmasi & Print' : `⚠️ Kurang Rp ${remaining.toLocaleString('id-ID')}`}
             </button>
