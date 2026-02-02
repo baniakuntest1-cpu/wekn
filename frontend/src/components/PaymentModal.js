@@ -159,21 +159,21 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" data-testid="payment-modal">
-      <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[85vh] flex flex-col">
-        {/* Header */}
-        <div className="p-3 pb-2">
-          <h2 className="text-lg font-bold text-gray-800 text-center" data-testid="payment-modal-title">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2" data-testid="payment-modal">
+      <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[75vh] flex flex-col">
+        {/* Header - Super Compact */}
+        <div className="px-4 py-2 border-b">
+          <h2 className="text-base font-bold text-gray-800 text-center" data-testid="payment-modal-title">
             💳 Pembayaran
           </h2>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto px-4 pb-2">
-          {/* Total Belanja */}
-          <div className="bg-orange-50 rounded-lg p-2 mb-3">
-            <p className="text-xs text-gray-600">Total Belanja:</p>
-            <p className="text-xl font-bold text-orange-600" data-testid="payment-total">
+        {/* Scrollable Content - Force Small */}
+        <div className="flex-1 overflow-y-auto px-3 py-2" style={{ maxHeight: 'calc(75vh - 140px)' }}>
+          {/* Total Belanja - Minimal */}
+          <div className="bg-orange-50 rounded p-2 mb-2">
+            <p className="text-xs text-gray-600">Total:</p>
+            <p className="text-lg font-bold text-orange-600" data-testid="payment-total">
               Rp {total.toLocaleString('id-ID')}
             </p>
           </div>
