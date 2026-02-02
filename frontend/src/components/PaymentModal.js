@@ -304,37 +304,35 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
           </div>
         )}
 
-        {/* Payment List */}
+        {/* Payment List - Minimal */}
         {payments.length > 0 && (
-          <div className="mb-3 bg-green-50 rounded-lg p-3 border-2 border-green-200">
-            <p className="text-xs font-semibold text-gray-700 mb-2">💰 Pembayaran:</p>
+          <div className="mb-2 bg-green-50 rounded p-2 border border-green-200">
+            <p className="text-xs font-semibold text-gray-700 mb-1">💰 Pembayaran:</p>
             {payments.map((payment, index) => (
-              <div key={index} className="flex justify-between items-center bg-white rounded p-2 mb-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold">{payment.method_name}</span>
-                  {payment.reference && (
-                    <span className="text-xs text-gray-500">({payment.reference})</span>
-                  )}
+              <div key={index} className="flex justify-between items-center bg-white rounded p-1.5 mb-1 text-xs">
+                <div>
+                  <span className="font-semibold">{payment.method_name}</span>
+                  {payment.reference && <span className="text-gray-500 ml-1">({payment.reference})</span>}
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-sm">Rp {payment.amount.toLocaleString('id-ID')}</span>
+                <div className="flex items-center gap-1">
+                  <span className="font-bold">Rp {payment.amount.toLocaleString('id-ID')}</span>
                   <button
                     onClick={() => handleRemovePayment(index)}
-                    className="text-red-500 hover:text-red-700 text-xs"
+                    className="text-red-500 hover:text-red-700"
                   >
                     ✕
                   </button>
                 </div>
               </div>
             ))}
-            <div className="border-t-2 border-green-300 mt-2 pt-2">
-              <div className="flex justify-between text-sm">
-                <span className="font-semibold">Total Dibayar:</span>
+            <div className="border-t border-green-300 mt-1 pt-1">
+              <div className="flex justify-between text-xs">
+                <span className="font-semibold">Total:</span>
                 <span className="font-bold text-green-700">Rp {totalPaid.toLocaleString('id-ID')}</span>
               </div>
               {change > 0 && (
-                <div className="flex justify-between text-sm mt-1">
-                  <span className="font-semibold text-orange-700">Kembalian:</span>
+                <div className="flex justify-between text-xs">
+                  <span className="text-orange-700">Kembalian:</span>
                   <span className="font-bold text-orange-700">Rp {change.toLocaleString('id-ID')}</span>
                 </div>
               )}
