@@ -178,45 +178,33 @@ const PaymentModal = ({ isOpen, onClose, total, onConfirmPayment }) => {
             </p>
           </div>
 
-        {/* Customer Selection */}
-        <div className="mb-3">
+        {/* Customer Section - Minimal */}
+        <div className="mb-2 bg-blue-50 rounded p-2 border border-blue-200">
           <label className="block text-xs font-semibold text-gray-700 mb-1">
-            👤 Customer (opsional):
+            👤 Customer:
           </label>
           {selectedCustomer ? (
-            <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-2 flex justify-between items-center">
+            <div className="bg-white rounded p-1.5 flex justify-between items-center text-xs">
               <div>
-                <p className="font-semibold text-sm text-blue-900">{selectedCustomer.name}</p>
-                <p className="text-xs text-blue-700">{selectedCustomer.phone}</p>
+                <p className="font-semibold">{selectedCustomer.name}</p>
+                <p className="text-gray-600">{selectedCustomer.phone}</p>
               </div>
               <button
                 onClick={() => setSelectedCustomer(null)}
                 data-testid="remove-customer-button"
-                className="text-red-500 hover:text-red-700 font-bold text-xs"
+                className="text-red-500 hover:text-red-700 font-bold"
               >
                 ✕
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => setShowCustomerModal(true)}
-                data-testid="select-customer-button"
-                className="bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-2 px-3 rounded-lg text-sm"
-              >
-                📋 Pilih Customer
-              </button>
-              <button
-                onClick={() => {
-                  setShowCustomerModal(true);
-                  setCustomerSearchTerm('');
-                }}
-                data-testid="register-new-customer-button"
-                className="bg-green-100 hover:bg-green-200 text-green-800 font-semibold py-2 px-3 rounded-lg text-sm"
-              >
-                ➕ Daftar Baru
-              </button>
-            </div>
+            <button
+              onClick={() => setShowCustomerModal(true)}
+              data-testid="select-customer-button"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-1.5 rounded text-xs"
+            >
+              + Pilih
+            </button>
           )}
         </div>
 
